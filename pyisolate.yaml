@@ -1,0 +1,19 @@
+# PyIsolate manifest for ComfyUI-PyIsolated node
+# Enables process isolation for arbitrary Python code execution
+
+isolated: true
+name: ComfyUI-PyIsolated
+
+# Dependencies: User-specified via node widget (dynamic venv creation)
+# For now, start with no fixed dependencies
+dependencies: []
+
+# Mandatory for ComfyUI: Zero-copy tensor sharing
+share_torch: true
+
+# Metadata
+metadata:
+  description: "Secure arbitrary Python execution with process isolation"
+  version: "0.1.0"
+  security: "Process-isolated via PyIsolate (malicious code cannot escape)"
+  research: "ComfyUI Python Execution Node Design.md Section 1.2"
