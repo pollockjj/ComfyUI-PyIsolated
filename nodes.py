@@ -1,7 +1,14 @@
 from __future__ import annotations
 
+import logging
+from typing import Dict
+
 from comfy_api.latest import io, ComfyExtension
 
+from .execution_wrapper import run_code_safe
+
+logger = logging.getLogger(__name__)
+LOG_PREFIX = "🔒 [PyIsolated]"
 
 class PyIsolatedTestNode(io.ComfyNode):
     @classmethod
