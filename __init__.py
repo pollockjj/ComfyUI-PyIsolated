@@ -9,7 +9,7 @@ class PyIsolatedTestNodeV1:
     
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("message",)
-    FUNCTION = "test_v1"
+    FUNCTION = "test"
     CATEGORY = "pyisolated"
 
     def test(self):
