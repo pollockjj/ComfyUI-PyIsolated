@@ -42,6 +42,56 @@ def get_venv_name(dependencies: List[str]) -> str:
     return f"PyIsolated_{dep_hash}"
 
 
+def get_venv_root() -> Path:
+    """Get the venv root directory, works on both Windows and Linux.
+    
+    Returns:
+        Path to .pyisolate_venvs directory
+    """
+    # Try to find ComfyUI root via folder_paths
+    try:
+        import folder_paths
+        return Path(folder_paths.base_path) / ".pyisolate_venvs"
+    except ImportError:
+        pass
+    
+    # Fallback: relative to this file
+    current_file = Path(__file__).resolve()
+    # Go up: execution_wrapper.py -> ComfyUI-PyIsolated -> custom_nodes -> ComfyUI
+    comfy_root = current_file.parent.parent.parent
+    return comfy_root / ".pyisolate_venvs"
+
+
+def get_python_executable(venv_path: Path) -> Path:
+    """Get the Python executable path for a venv (cross-platform).
+    
+    Args:
+        venv_path: Path to venv directory
+    
+    Returns:
+        Path to python executable
+    """
+    if os.name == "nt":
+        return venv_path / "Scripts" / "python.exe"
+    else:
+        return venv_path / "bin" / "python"
+
+
+def get_pip_executable(venv_path: Path) -> Path:
+    """Get the pip executable path for a venv (cross-platform).
+    
+    Args:
+        venv_path: Path to venv directory
+    
+    Returns:
+        Path to pip executable
+    """
+    if os.name == "nt":
+        return venv_path / "Scripts" / "pip.exe"
+    else:
+        return venv_path / "bin" / "pip"
+
+
 def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Path:
     """Ensure venv exists with dependencies installed.
     
@@ -61,6 +111,9 @@ def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Pat
     
     logger.info(f"{LOG_PREFIX}[Venv] Creating new venv: {venv_name}")
     
+    # Ensure venv root exists
+    venv_root.mkdir(parents=True, exist_ok=True)
+    
     # Create venv (stream output)
     print(f"\n{'='*60}")
     print(f"🔨 Creating venv: {venv_name}")
@@ -73,7 +126,7 @@ def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Pat
     
     # Install dependencies
     if dependencies:
-        pip_path = venv_path / "bin" / "pip"
+        pip_path = get_pip_executable(venv_path)
         print(f"\n📦 Installing {len(dependencies)} package(s)...")
         
         for i, dep in enumerate(dependencies, 1):
@@ -114,10 +167,9 @@ def run_code_in_venv(
     Returns:
         Tuple of (result, stdout, exit_code)
     """
-    python_path = venv_path / "bin" / "python"
+    python_path = get_python_executable(venv_path)
     
     # Write code and inputs to temp files to avoid escaping issues
-    import tempfile
     with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
         f.write(code)
         code_file = f.name
@@ -126,14 +178,14 @@ def run_code_in_venv(
         json.dump(inputs, f)
         inputs_file = f.name
     
-    # Execution wrapper script
-    wrapper_script = f"""
+    # Execution wrapper script - use raw strings for Windows path compatibility
+    wrapper_script = f'''
 import sys
 import json
 from io import StringIO
 
 # Load inputs
-with open('{inputs_file}', 'r') as f:
+with open(r"{inputs_file}", "r") as f:
     inputs = json.load(f)
 
 # Capture stdout
@@ -147,7 +199,7 @@ try:
     namespace["__builtins__"] = __builtins__
     
     # Execute code from file
-    with open('{code_file}', 'r') as f:
+    with open(r"{code_file}", "r") as f:
         code = f.read()
     
     exec(code, namespace)
@@ -167,7 +219,7 @@ stdout = stdout_capture.getvalue()
 # Output as JSON
 output = {{"result": str(result), "stdout": stdout, "exit_code": exit_code}}
 print(json.dumps(output))
-"""
+'''
     
     try:
         # Run wrapper in venv
@@ -228,8 +280,9 @@ def run_code_safe(
     venv_name = get_venv_name(dependencies)
     logger.info(f"{LOG_PREFIX}[Wrapper] Target venv: {venv_name}")
     
-    # Ensure venv exists
-    venv_root = Path("/mnt/ai/ComfyUI/.pyisolate_venvs")
+    # Get platform-agnostic venv root
+    venv_root = get_venv_root()
+    
     try:
         venv_path = ensure_venv(venv_name, dependencies, venv_root)
     except Exception as e:
