@@ -1,11 +1,7 @@
-"""Execution wrapper for isolated Python code execution.
-
-Captures stdout, handles errors, executes user code in controlled namespace.
-"""
-
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import logging
 import os
@@ -14,21 +10,28 @@ import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 logger = logging.getLogger(__name__)
-LOG_PREFIX = "🔒 [PyIsolated]"
+
+_installed_packages: Set[str] = set()
+
+
+def _is_package_installed(package_name: str) -> bool:
+    base_name = package_name.split(">=")[0].split("==")[0].split("<")[0].split("[")[0].strip()
+
+    if base_name.lower() in _installed_packages:
+        return True
+
+    spec = importlib.util.find_spec(base_name)
+    if spec is not None:
+        _installed_packages.add(base_name.lower())
+        return True
+    
+    return False
 
 
 def get_venv_name(dependencies: List[str]) -> str:
-    """Generate unique venv name based on dependency hash.
-    
-    Args:
-        dependencies: List of pip package specifiers
-    
-    Returns:
-        Venv name like 'PyIsolated_abc12345'
-    """
     if not dependencies:
         return "ComfyUI-PyIsolated"  # Default venv
     
@@ -43,11 +46,6 @@ def get_venv_name(dependencies: List[str]) -> str:
 
 
 def get_venv_root() -> Path:
-    """Get the venv root directory, works on both Windows and Linux.
-    
-    Returns:
-        Path to .pyisolate_venvs directory
-    """
     # Try to find ComfyUI root via folder_paths
     try:
         import folder_paths
@@ -63,14 +61,6 @@ def get_venv_root() -> Path:
 
 
 def get_python_executable(venv_path: Path) -> Path:
-    """Get the Python executable path for a venv (cross-platform).
-    
-    Args:
-        venv_path: Path to venv directory
-    
-    Returns:
-        Path to python executable
-    """
     if os.name == "nt":
         return venv_path / "Scripts" / "python.exe"
     else:
@@ -78,14 +68,6 @@ def get_python_executable(venv_path: Path) -> Path:
 
 
 def get_pip_executable(venv_path: Path) -> Path:
-    """Get the pip executable path for a venv (cross-platform).
-    
-    Args:
-        venv_path: Path to venv directory
-    
-    Returns:
-        Path to pip executable
-    """
     if os.name == "nt":
         return venv_path / "Scripts" / "pip.exe"
     else:
@@ -93,23 +75,13 @@ def get_pip_executable(venv_path: Path) -> Path:
 
 
 def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Path:
-    """Ensure venv exists with dependencies installed.
-    
-    Args:
-        venv_name: Name of the venv
-        dependencies: List of pip packages to install
-        venv_root: Root directory for venvs
-    
-    Returns:
-        Path to the venv directory
-    """
     venv_path = venv_root / venv_name
     
     if venv_path.exists():
-        logger.info(f"{LOG_PREFIX}[Venv] Reusing existing venv: {venv_name}")
+        logger.info(f"[Venv] Reusing existing venv: {venv_name}")
         return venv_path
     
-    logger.info(f"{LOG_PREFIX}[Venv] Creating new venv: {venv_name}")
+    logger.info(f"[Venv] Creating new venv: {venv_name}")
     
     # Ensure venv root exists
     venv_root.mkdir(parents=True, exist_ok=True)
@@ -141,14 +113,14 @@ def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Pat
                 print(f"✅ Installed: {dep}")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Failed to install {dep}")
-                logger.error(f"{LOG_PREFIX}[Venv] Failed to install {dep}: {e}")
+                logger.error(f"[Venv] Failed to install {dep}: {e}")
                 raise
         
         print(f"\n{'='*60}")
         print(f"✅ All packages installed in: {venv_name}")
         print(f"{'='*60}\n")
     
-    logger.info(f"{LOG_PREFIX}[Venv] Venv ready: {venv_name}")
+    logger.info(f"[Venv] Venv ready: {venv_name}")
     return venv_path
 
 
@@ -157,16 +129,7 @@ def run_code_in_venv(
     inputs: Dict[str, any],
     venv_path: Path
 ) -> Tuple[str, str, int]:
-    """Execute code in specific venv via subprocess.
-    
-    Args:
-        code: Python code to execute
-        inputs: Input variables
-        venv_path: Path to venv to use
-    
-    Returns:
-        Tuple of (result, stdout, exit_code)
-    """
+
     python_path = get_python_executable(venv_path)
     
     # Write code and inputs to temp files to avoid escaping issues
@@ -235,15 +198,15 @@ print(json.dumps(output))
             output = json.loads(proc.stdout)
             return (output["result"], output["stdout"], output["exit_code"])
         except json.JSONDecodeError as e:
-            logger.error(f"{LOG_PREFIX}[Venv] Failed to parse output: {e}")
-            logger.error(f"{LOG_PREFIX}[Venv] Raw stdout: {repr(proc.stdout)}")
-            logger.error(f"{LOG_PREFIX}[Venv] Stderr: {proc.stderr}")
+            logger.error(f"[Venv] Failed to parse output: {e}")
+            logger.error(f"[Venv] Raw stdout: {repr(proc.stdout)}")
+            logger.error(f"[Venv] Stderr: {proc.stderr}")
             return (f"Error: {proc.stderr or str(e)}", proc.stdout, 1)
     
     except subprocess.TimeoutExpired:
         return ("Error: Execution timeout (30s)", "", 1)
     except Exception as e:
-        logger.error(f"{LOG_PREFIX}[Venv] Execution failed: {e}", exc_info=True)
+        logger.error(f"[Venv] Execution failed: {e}", exc_info=True)
         return (f"Error: {str(e)}", "", 1)
     finally:
         # Cleanup temp files
@@ -259,26 +222,14 @@ def run_code_safe(
     inputs: Dict[str, any],
     dependencies: List[str] = None,
 ) -> Tuple[str, str, int]:
-    """Execute user code safely with dynamic venv per dependency set.
-    
-    Args:
-        code: Python code string to execute
-        inputs: Dictionary of input variables (accessible in code)
-        dependencies: List of pip packages (creates unique venv per set)
-    
-    Returns:
-        Tuple of (result_string, stdout_string, exit_code)
-        exit_code: 0 = success, 1 = error
-    
-    Security: Runs in isolated venv (managed by PyIsolate infrastructure)
-    """
+
     dependencies = dependencies or []
     
-    logger.info(f"{LOG_PREFIX}[Wrapper] Executing code with {len(dependencies)} dependencies")
+    logger.info(f"[Wrapper] Executing code with {len(dependencies)} dependencies")
     
     # Generate venv name from dependencies
     venv_name = get_venv_name(dependencies)
-    logger.info(f"{LOG_PREFIX}[Wrapper] Target venv: {venv_name}")
+    logger.info(f"[Wrapper] Target venv: {venv_name}")
     
     # Get platform-agnostic venv root
     venv_root = get_venv_root()
@@ -286,34 +237,49 @@ def run_code_safe(
     try:
         venv_path = ensure_venv(venv_name, dependencies, venv_root)
     except Exception as e:
-        logger.error(f"{LOG_PREFIX}[Wrapper] Venv creation failed: {e}", exc_info=True)
+        logger.error(f"[Wrapper] Venv creation failed: {e}", exc_info=True)
         return (f"Venv creation error: {str(e)}", "", 1)
     
     # Execute code in the venv
-    logger.info(f"{LOG_PREFIX}[Wrapper] Executing in venv: {venv_path}")
+    logger.info(f"[Wrapper] Executing in venv: {venv_path}")
     result, stdout, exit_code = run_code_in_venv(code, inputs, venv_path)
     
     logger.info(
-        f"{LOG_PREFIX}[Wrapper] Complete - venv={venv_name}, exit_code={exit_code}, "
+        f"[Wrapper] Complete - venv={venv_name}, exit_code={exit_code}, "
         f"stdout_len={len(stdout)}, result_len={len(result)}"
     )
     
     return (result, stdout, exit_code)
 
 
-def run_code_direct(code: str, inputs: Dict[str, any]) -> Tuple[any, str, int]:
-    """Execute code directly via exec() in the current process.
+def run_code_direct(code: str, inputs: Dict[str, any], dependencies: List[str] = None) -> Tuple[any, str, int]:
+    if dependencies:
+        for dep in dependencies:
+            # Skip if already installed
+            if _is_package_installed(dep):
+                sys.__stdout__.write(f"✅ {dep} (already installed)\n")
+                sys.__stdout__.flush()
+                continue
+            
+            try:
+                sys.__stdout__.write(f"📦 Installing: {dep}...\n")
+                sys.__stdout__.flush()
+                result = subprocess.run(
+                    [sys.executable, "-m", "pip", "install", dep],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                # Cache as installed
+                base_name = dep.split(">=")[0].split("==")[0].split("<")[0].split("[")[0].strip()
+                _installed_packages.add(base_name.lower())
+                sys.__stdout__.write(f"✅ Installed: {dep}\n")
+                sys.__stdout__.flush()
+            except subprocess.CalledProcessError as e:
+                sys.__stdout__.write(f"❌ Failed to install {dep}: {e.stderr}\n")
+                sys.__stdout__.flush()
+                return (f"Error installing {dep}: {e.stderr}", "", 1)
     
-    No subprocess, no venv - just direct execution with tensor access.
-    Used for Advanced nodes that need zero-copy tensor sharing.
-    
-    Args:
-        code: Python code to execute
-        inputs: Input variables (can include tensors)
-    
-    Returns:
-        Tuple of (result, stdout, exit_code)
-    """
     stdout_capture = StringIO()
     original_stdout = sys.stdout
     
@@ -334,7 +300,7 @@ def run_code_direct(code: str, inputs: Dict[str, any]) -> Tuple[any, str, int]:
         
     except Exception as e:
         stdout = stdout_capture.getvalue()
-        logger.error(f"{LOG_PREFIX}[Direct] Execution error: {e}")
+        logger.error(f"[Direct] Execution error: {e}")
         return (f"Error: {str(e)}", stdout, 1)
     finally:
         sys.stdout = original_stdout
