@@ -299,3 +299,42 @@ def run_code_safe(
     )
     
     return (result, stdout, exit_code)
+
+
+def run_code_direct(code: str, inputs: Dict[str, any]) -> Tuple[any, str, int]:
+    """Execute code directly via exec() in the current process.
+    
+    No subprocess, no venv - just direct execution with tensor access.
+    Used for Advanced nodes that need zero-copy tensor sharing.
+    
+    Args:
+        code: Python code to execute
+        inputs: Input variables (can include tensors)
+    
+    Returns:
+        Tuple of (result, stdout, exit_code)
+    """
+    stdout_capture = StringIO()
+    original_stdout = sys.stdout
+    
+    try:
+        sys.stdout = stdout_capture
+        
+        # Create namespace with inputs
+        namespace = inputs.copy()
+        namespace["__builtins__"] = __builtins__
+        
+        # Execute user code
+        exec(code, namespace)
+        
+        # Extract result
+        result = namespace.get("result", "")
+        stdout = stdout_capture.getvalue()
+        return (result, stdout, 0)
+        
+    except Exception as e:
+        stdout = stdout_capture.getvalue()
+        logger.error(f"{LOG_PREFIX}[Direct] Execution error: {e}")
+        return (f"Error: {str(e)}", stdout, 1)
+    finally:
+        sys.stdout = original_stdout

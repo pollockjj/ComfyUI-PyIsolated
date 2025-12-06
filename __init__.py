@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict
+from typing import Any, Tuple
 
 from comfy_api.latest import ComfyExtension, io
 
-from .execution_wrapper import run_code_safe
+from .execution_wrapper import run_code_safe, run_code_direct
 
 logger = logging.getLogger(__name__)
 LOG_PREFIX = ""
@@ -77,10 +77,6 @@ class PyIsolatedExecuteAdvancedV1:
                 "image_payload": ("IMAGE",),
                 "latent_payload": ("LATENT",),
                 "mask_payload": ("MASK",),
-                "dependencies": ("STRING", {
-                    "multiline": True,
-                    "default": "",
-                }),
             },
         }
 
@@ -96,10 +92,8 @@ class PyIsolatedExecuteAdvancedV1:
         image_payload: Any = None,
         latent_payload: Any = None,
         mask_payload: Any = None,
-        dependencies: str = "",
     ) -> Tuple[str, Any, Any, str, int]:
-        deps = [line.strip() for line in dependencies.split("\n") if line.strip() and not line.strip().startswith("#")]
-        logger.info(f"{LOG_PREFIX}[V1-ADV] Executing with {len(deps)} dependencies")
+        logger.info(f"{LOG_PREFIX}[V1-ADV] Executing directly (tensor-safe)")
         
         inputs = {
             "text_payload": text_payload,
@@ -108,11 +102,7 @@ class PyIsolatedExecuteAdvancedV1:
             "mask_payload": mask_payload,
         }
         
-        result, stdout, exit_code = run_code_safe(
-            code=code,
-            inputs=inputs,
-            dependencies=deps,
-        )
+        result, stdout, exit_code = run_code_direct(code=code, inputs=inputs)
         
         # Parse result - user code can return dict with typed outputs
         result_image = None
@@ -207,12 +197,6 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
                 io.Image.Input("image_payload", optional=True),
                 io.Latent.Input("latent_payload", optional=True),
                 io.Mask.Input("mask_payload", optional=True),
-                io.String.Input(
-                    "dependencies",
-                    multiline=True,
-                    default="",
-                    optional=True,
-                ),
             ],
             outputs=[
                 io.String.Output("result_text"),
@@ -231,10 +215,8 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
         image_payload: Any = None,
         latent_payload: Any = None,
         mask_payload: Any = None,
-        dependencies: str = "",
     ) -> io.NodeOutput:
-        deps = [line.strip() for line in dependencies.split("\n") if line.strip() and not line.strip().startswith("#")]
-        logger.info(f"{LOG_PREFIX}[V3-ADV] Executing with {len(deps)} dependencies")
+        logger.info(f"{LOG_PREFIX}[V3-ADV] Executing directly (tensor-safe)")
         
         inputs = {
             "text_payload": text_payload,
@@ -243,11 +225,7 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
             "mask_payload": mask_payload,
         }
         
-        result, stdout, exit_code = run_code_safe(
-            code=code,
-            inputs=inputs,
-            dependencies=deps,
-        )
+        result, stdout, exit_code = run_code_direct(code=code, inputs=inputs)
         
         # Parse result - user code can return dict with typed outputs
         result_image = None
@@ -269,6 +247,8 @@ class PyIsolatedExtension(ComfyExtension):
         return [PyIsolatedTestNodeV3, PyIsolatedExecuteV3, PyIsolatedExecuteAdvancedV3]
 
 
+async def comfy_entrypoint() -> PyIsolatedExtension:
+    return PyIsolatedExtension()
 
 
 NODE_CLASS_MAPPINGS = {"PyIsolatedTestNodeV1": PyIsolatedTestNodeV1, "PyIsolatedTestNodeV3": PyIsolatedTestNodeV3, "PyIsolatedExecuteV1": PyIsolatedExecuteV1, "PyIsolatedExecuteV3": PyIsolatedExecuteV3, "PyIsolatedExecuteAdvancedV1": PyIsolatedExecuteAdvancedV1, "PyIsolatedExecuteAdvancedV3": PyIsolatedExecuteAdvancedV3}
