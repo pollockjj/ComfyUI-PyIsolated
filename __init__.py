@@ -1,8 +1,3 @@
-"""ComfyUI-PyIsolatedV3: Isolated Python execution nodes.
-
-Supports both V1 (legacy) and V3 (new) ComfyUI APIs.
-"""
-
 from __future__ import annotations
 
 from comfy_api.latest import ComfyExtension

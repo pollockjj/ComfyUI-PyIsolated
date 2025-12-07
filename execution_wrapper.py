@@ -33,29 +33,24 @@ def _is_package_installed(package_name: str) -> bool:
 
 def get_venv_name(dependencies: List[str]) -> str:
     if not dependencies:
-        return "ComfyUI-PyIsolated"  # Default venv
+        return "ComfyUI-PyIsolated"  # Expected location
     
-    # Sort for consistency
     deps_sorted = sorted(dependencies)
     dep_string = "\n".join(deps_sorted)
     
-    # Hash to get unique identifier
     dep_hash = hashlib.sha256(dep_string.encode()).hexdigest()[:8]
     
     return f"PyIsolated_{dep_hash}"
 
 
 def get_venv_root() -> Path:
-    # Try to find ComfyUI root via folder_paths
     try:
         import folder_paths
         return Path(folder_paths.base_path) / ".pyisolate_venvs"
     except ImportError:
         pass
     
-    # Fallback: relative to this file
     current_file = Path(__file__).resolve()
-    # Go up: execution_wrapper.py -> ComfyUI-PyIsolated -> custom_nodes -> ComfyUI
     comfy_root = current_file.parent.parent.parent
     return comfy_root / ".pyisolate_venvs"
 
@@ -82,43 +77,32 @@ def ensure_venv(venv_name: str, dependencies: List[str], venv_root: Path) -> Pat
         return venv_path
     
     logger.info(f"[Venv] Creating new venv: {venv_name}")
-    
-    # Ensure venv root exists
     venv_root.mkdir(parents=True, exist_ok=True)
     
-    # Create venv (stream output)
-    print(f"\n{'='*60}")
-    print(f"🔨 Creating venv: {venv_name}")
-    print(f"{'='*60}")
     subprocess.run(
         [sys.executable, "-m", "venv", str(venv_path)],
         check=True
     )
-    print(f"✅ Venv created: {venv_path}")
+    logger.info(f"[Venv] Created: {venv_path}")
     
-    # Install dependencies
     if dependencies:
         pip_path = get_pip_executable(venv_path)
-        print(f"\n📦 Installing {len(dependencies)} package(s)...")
+        logger.info(f"[Venv] Installing {len(dependencies)} package(s)")
         
         for i, dep in enumerate(dependencies, 1):
-            print(f"\n[{i}/{len(dependencies)}] Installing: {dep}")
-            print(f"{'-'*60}")
+            logger.info(f"[Venv] [{i}/{len(dependencies)}] Installing: {dep}")
             try:
-                # Stream output directly to console
                 subprocess.run(
                     [str(pip_path), "install", dep],
-                    check=True
+                    check=True,
+                    capture_output=True
                 )
-                print(f"✅ Installed: {dep}")
+                logger.info(f"[Venv] Installed: {dep}")
             except subprocess.CalledProcessError as e:
-                print(f"❌ Failed to install {dep}")
                 logger.error(f"[Venv] Failed to install {dep}: {e}")
                 raise
         
-        print(f"\n{'='*60}")
-        print(f"✅ All packages installed in: {venv_name}")
-        print(f"{'='*60}\n")
+        logger.info(f"[Venv] All packages installed in: {venv_name}")
     
     logger.info(f"[Venv] Venv ready: {venv_name}")
     return venv_path
@@ -129,10 +113,8 @@ def run_code_in_venv(
     inputs: Dict[str, any],
     venv_path: Path
 ) -> Tuple[str, str, int]:
-
     python_path = get_python_executable(venv_path)
     
-    # Write code and inputs to temp files to avoid escaping issues
     with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
         f.write(code)
         code_file = f.name
@@ -141,33 +123,27 @@ def run_code_in_venv(
         json.dump(inputs, f)
         inputs_file = f.name
     
-    # Execution wrapper script - use raw strings for Windows path compatibility
     wrapper_script = f'''
 import sys
 import json
 from io import StringIO
 
-# Load inputs
 with open(r"{inputs_file}", "r") as f:
     inputs = json.load(f)
 
-# Capture stdout
 stdout_capture = StringIO()
 original_stdout = sys.stdout
 sys.stdout = stdout_capture
 
 try:
-    # Create namespace
     namespace = inputs.copy()
     namespace["__builtins__"] = __builtins__
     
-    # Execute code from file
     with open(r"{code_file}", "r") as f:
         code = f.read()
     
     exec(code, namespace)
     
-    # Extract result
     result = namespace.get("result", "")
     exit_code = 0
 except Exception as e:
@@ -176,16 +152,12 @@ except Exception as e:
 finally:
     sys.stdout = original_stdout
 
-# Get stdout
 stdout = stdout_capture.getvalue()
-
-# Output as JSON
 output = {{"result": str(result), "stdout": stdout, "exit_code": exit_code}}
 print(json.dumps(output))
 '''
     
     try:
-        # Run wrapper in venv
         proc = subprocess.run(
             [str(python_path), "-c", wrapper_script],
             capture_output=True,
@@ -193,7 +165,6 @@ print(json.dumps(output))
             timeout=30
         )
         
-        # Parse output
         try:
             output = json.loads(proc.stdout)
             return (output["result"], output["stdout"], output["exit_code"])
@@ -209,7 +180,6 @@ print(json.dumps(output))
         logger.error(f"[Venv] Execution failed: {e}", exc_info=True)
         return (f"Error: {str(e)}", "", 1)
     finally:
-        # Cleanup temp files
         try:
             os.unlink(code_file)
             os.unlink(inputs_file)
@@ -222,16 +192,13 @@ def run_code_safe(
     inputs: Dict[str, any],
     dependencies: List[str] = None,
 ) -> Tuple[str, str, int]:
-
     dependencies = dependencies or []
     
     logger.info(f"[Wrapper] Executing code with {len(dependencies)} dependencies")
     
-    # Generate venv name from dependencies
     venv_name = get_venv_name(dependencies)
     logger.info(f"[Wrapper] Target venv: {venv_name}")
     
-    # Get platform-agnostic venv root
     venv_root = get_venv_root()
     
     try:
@@ -240,7 +207,6 @@ def run_code_safe(
         logger.error(f"[Wrapper] Venv creation failed: {e}", exc_info=True)
         return (f"Venv creation error: {str(e)}", "", 1)
     
-    # Execute code in the venv
     logger.info(f"[Wrapper] Executing in venv: {venv_path}")
     result, stdout, exit_code = run_code_in_venv(code, inputs, venv_path)
     
@@ -255,29 +221,23 @@ def run_code_safe(
 def run_code_direct(code: str, inputs: Dict[str, any], dependencies: List[str] = None) -> Tuple[any, str, int]:
     if dependencies:
         for dep in dependencies:
-            # Skip if already installed
             if _is_package_installed(dep):
-                sys.__stdout__.write(f"✅ {dep} (already installed)\n")
-                sys.__stdout__.flush()
+                logger.info(f"[Direct] {dep} already installed")
                 continue
             
             try:
-                sys.__stdout__.write(f"📦 Installing: {dep}...\n")
-                sys.__stdout__.flush()
+                logger.info(f"[Direct] Installing: {dep}")
                 result = subprocess.run(
                     [sys.executable, "-m", "pip", "install", dep],
                     check=True,
                     capture_output=True,
                     text=True,
                 )
-                # Cache as installed
                 base_name = dep.split(">=")[0].split("==")[0].split("<")[0].split("[")[0].strip()
                 _installed_packages.add(base_name.lower())
-                sys.__stdout__.write(f"✅ Installed: {dep}\n")
-                sys.__stdout__.flush()
+                logger.info(f"[Direct] Installed: {dep}")
             except subprocess.CalledProcessError as e:
-                sys.__stdout__.write(f"❌ Failed to install {dep}: {e.stderr}\n")
-                sys.__stdout__.flush()
+                logger.error(f"[Direct] Failed to install {dep}: {e.stderr}")
                 return (f"Error installing {dep}: {e.stderr}", "", 1)
     
     stdout_capture = StringIO()
@@ -286,14 +246,11 @@ def run_code_direct(code: str, inputs: Dict[str, any], dependencies: List[str] =
     try:
         sys.stdout = stdout_capture
         
-        # Create namespace with inputs
         namespace = inputs.copy()
         namespace["__builtins__"] = __builtins__
         
-        # Execute user code
         exec(code, namespace)
         
-        # Extract result
         result = namespace.get("result", "")
         stdout = stdout_capture.getvalue()
         return (result, stdout, 0)
