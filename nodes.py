@@ -1,10 +1,11 @@
 from __future__ import annotations
-import logging
-from typing import Any, Tuple
+
+from typing import Any
+
 from comfy_api.latest import io
+
 from .execution_wrapper import run_code_direct
 
-logger = logging.getLogger(__name__)
 
 class PyIsolatedTestNodeV3(io.ComfyNode):
     @classmethod
@@ -14,14 +15,13 @@ class PyIsolatedTestNodeV3(io.ComfyNode):
             display_name="PyIsolatedTestNodeV3",
             category="PyIsolated",
             inputs=[],
-            outputs=[
-                io.String.Output("message", display_name="message"),
-            ],
+            outputs=[io.String.Output("message", display_name="message")],
         )
 
     @classmethod
     def execute(cls) -> io.NodeOutput:
         return io.NodeOutput("PyIsolated V3 Node is working!")
+
 
 class PyIsolatedExecuteV3(io.ComfyNode):
     @classmethod
@@ -34,7 +34,7 @@ class PyIsolatedExecuteV3(io.ComfyNode):
                 io.String.Input(
                     "code",
                     multiline=True,
-                    default="# Access: text_payload, image_payload, latent_payload, mask_payload\nresult = f'Received text: {text_payload}'",
+                    default="result = f'Received text: {text_payload}'",
                 ),
                 io.String.Input("text_payload", optional=True),
                 io.Image.Input("image_payload", optional=True),
@@ -59,17 +59,15 @@ class PyIsolatedExecuteV3(io.ComfyNode):
         latent_payload: Any = None,
         mask_payload: Any = None,
     ) -> io.NodeOutput:
-        logger.info(f"Executing directly (tensor-safe)")
-        
         inputs = {
             "text_payload": text_payload,
             "image_payload": image_payload,
             "latent_payload": latent_payload,
             "mask_payload": mask_payload,
         }
-        
+
         result, stdout, exit_code = run_code_direct(code=code, inputs=inputs)
-        
+
         result_image = None
         result_latent = None
         if isinstance(result, dict):
@@ -78,9 +76,9 @@ class PyIsolatedExecuteV3(io.ComfyNode):
             result_text = result.get("result_text", str(result))
         else:
             result_text = str(result)
-        
-        logger.info(f"exit_code={exit_code}, result_text_len={len(result_text)}")
+
         return io.NodeOutput(result_text, result_image, result_latent, stdout, exit_code)
+
 
 class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
     @classmethod
@@ -93,7 +91,7 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
                 io.String.Input(
                     "code",
                     multiline=True,
-                    default="# Access: text_payload, image_payload, latent_payload, mask_payload\nresult = f'Received text: {text_payload}'",
+                    default="result = f'Received text: {text_payload}'",
                 ),
                 io.String.Input("text_payload", optional=True),
                 io.Image.Input("image_payload", optional=True),
@@ -102,7 +100,7 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
                 io.String.Input(
                     "dependencies",
                     multiline=True,
-                    default="# One package per line\n# numpy\n# requests",
+                    default="# One package per line",
                     optional=True,
                 ),
             ],
@@ -125,18 +123,21 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
         mask_payload: Any = None,
         dependencies: str = "",
     ) -> io.NodeOutput:
-        deps = [line.strip() for line in dependencies.split("\n") if line.strip() and not line.strip().startswith("#")]
-        logger.info(f"Executing directly (tensor-safe) with {len(deps)} dependencies")
-        
+        deps = [
+            line.strip()
+            for line in dependencies.split("\n")
+            if line.strip() and not line.strip().startswith("#")
+        ]
+
         inputs = {
             "text_payload": text_payload,
             "image_payload": image_payload,
             "latent_payload": latent_payload,
             "mask_payload": mask_payload,
         }
-        
+
         result, stdout, exit_code = run_code_direct(code=code, inputs=inputs, dependencies=deps)
-        
+
         result_image = None
         result_latent = None
         if isinstance(result, dict):
@@ -145,6 +146,5 @@ class PyIsolatedExecuteAdvancedV3(io.ComfyNode):
             result_text = result.get("result_text", str(result))
         else:
             result_text = str(result)
-        
-        logger.info(f"exit_code={exit_code}, result_text_len={len(result_text)}")
+
         return io.NodeOutput(result_text, result_image, result_latent, stdout, exit_code)
