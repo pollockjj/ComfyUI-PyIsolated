@@ -182,3 +182,41 @@ class ZeroCopyArange(io.ComfyNode):
         logger.warning("[ZeroCopyArange] device=%s data_ptr=%d shape=%s", t.device, ptr, tuple(t.shape))
         return io.NodeOutput({"samples": t}, str(t.device), ptr)
 
+class TestCLIPProxy_APISO(io.ComfyNode):
+    """Full CLIP proxy check: tokenize + encode."""
+
+    @classmethod
+    def define_schema(cls) -> io.Schema:
+        return io.Schema(
+            node_id="TestCLIPProxy_APISO",
+            display_name="Test CLIP Proxy (Full) APISO",
+            category="PyIsolate/API Debug",
+            inputs=[
+                io.Clip.Input("clip"),
+                io.String.Input("text", multiline=True, default="a photo of a cat"),
+            ],
+            outputs=[io.Conditioning.Output(), io.String.Output(display_name="report")],
+        )
+
+    @classmethod
+    def execute(cls, clip, text: str) -> io.NodeOutput:
+        is_isolated = os.environ.get("PYISOLATE_CHILD") == "1"
+        clip_type = type(clip).__name__
+        report_lines = [f"Isolated: {is_isolated}", f"CLIP type: {clip_type}"]
+
+        tokens = clip.tokenize(text)
+        if isinstance(tokens, dict):
+            report_lines.append(f"tokenize: keys={list(tokens.keys())}")
+        else:
+            report_lines.append(f"tokenize: type={type(tokens)}")
+
+        cond = clip.encode_from_tokens_scheduled(tokens)
+        try:
+            if isinstance(cond, list) and cond and isinstance(cond[0], tuple):
+                tensor = cond[0][0]
+                shape = getattr(tensor, "shape", "N/A")
+                report_lines.append(f"encode: shape={shape}")
+        except Exception as exc:
+            report_lines.append(f"encode: error={exc}")
+
+        return io.NodeOutput(cond, "\n".join(report_lines))

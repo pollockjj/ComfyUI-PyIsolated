@@ -1,0 +1,1151 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "revision": 0,
+  "last_node_id": 24,
+  "last_link_id": 45,
+  "nodes": [
+    {
+      "id": 8,
+      "type": "SaveStringKJ",
+      "pos": [
+        970,
+        130
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Save Extracted Email",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "02_extracted_email",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "Show any [Crystools]",
+      "pos": [
+        1429.68523454639,
+        196.22319801853922
+      ],
+      "size": [
+        337.0318359375,
+        160
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 36
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      },
+      "widgets_values": [
+        false,
+        true,
+        ""
+      ]
+    },
+    {
+      "id": 9,
+      "type": "SaveStringKJ",
+      "pos": [
+        996.2199883829987,
+        345.34181521081086
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "Save Formatted Phone String",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "03_formatted_phone",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "SaveStringKJ",
+      "pos": [
+        1072.1906794475028,
+        1661.0670415468378
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "Save RegexMatch Result",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "04_regex_match_result",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 23,
+      "type": "Show any [Crystools]",
+      "pos": [
+        1055.393489743709,
+        1863.3412462347883
+      ],
+      "size": [
+        337.0318359375,
+        160
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 37
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      },
+      "widgets_values": [
+        false,
+        true,
+        ""
+      ]
+    },
+    {
+      "id": 18,
+      "type": "SaveStringKJ",
+      "pos": [
+        1036.5788232553734,
+        2674.987405847594
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "Save StringCompare Result",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "06_string_compare_result",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 21,
+      "type": "Show any [Crystools]",
+      "pos": [
+        997.3920108001926,
+        2866.6680324443023
+      ],
+      "size": [
+        337.0318359375,
+        160
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 39
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      },
+      "widgets_values": [
+        false,
+        true,
+        ""
+      ]
+    },
+    {
+      "id": 24,
+      "type": "Show any [Crystools]",
+      "pos": [
+        1287.4419132356475,
+        455.0676183740976
+      ],
+      "size": [
+        514.9837531044128,
+        291.98641785581594
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 35
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      },
+      "widgets_values": [
+        false,
+        true,
+        ""
+      ]
+    },
+    {
+      "id": 15,
+      "type": "SaveStringKJ",
+      "pos": [
+        914.3735883980606,
+        2141.185890691225
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "Save StringContains Result",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "05_string_contains_result",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 22,
+      "type": "Show any [Crystools]",
+      "pos": [
+        888.8671191295354,
+        2306.874822639018
+      ],
+      "size": [
+        569.5157862781247,
+        248.27393421707757
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 38
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      },
+      "widgets_values": [
+        false,
+        true,
+        ""
+      ]
+    },
+    {
+      "id": 2,
+      "type": "RegexExtract_ISO",
+      "pos": [
+        470,
+        130
+      ],
+      "size": [
+        400,
+        262
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "widget": {
+            "name": "string"
+          },
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            21,
+            36
+          ]
+        }
+      ],
+      "title": "RegexExtract_ISO - Extract Email",
+      "properties": {
+        "Node name for S&R": "RegexExtract_ISO"
+      },
+      "widgets_values": [
+        "",
+        "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+        "First Match",
+        true,
+        false,
+        false,
+        0
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 3,
+      "type": "RegexReplace_ISO",
+      "pos": [
+        470,
+        522
+      ],
+      "size": [
+        400,
+        292
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "widget": {
+            "name": "string"
+          },
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            22,
+            35
+          ]
+        }
+      ],
+      "title": "RegexReplace_ISO - Format Phone Number",
+      "properties": {
+        "Node name for S&R": "RegexReplace_ISO"
+      },
+      "widgets_values": [
+        "",
+        "(\\d{3})-(\\d{3})-(\\d{4})",
+        "($1) $2-$3",
+        true,
+        false,
+        false,
+        0
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 4,
+      "type": "RegexMatch_ISO",
+      "pos": [
+        312.6800697020076,
+        904.2726963790595
+      ],
+      "size": [
+        400,
+        214
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "widget": {
+            "name": "string"
+          },
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "matches",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "title": "RegexMatch_ISO - Check for Version Pattern",
+      "properties": {
+        "Node name for S&R": "RegexMatch_ISO"
+      },
+      "widgets_values": [
+        "",
+        "PyIsolate\\s+v\\d+\\.\\d+",
+        true,
+        false,
+        false
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 7,
+      "type": "SaveStringKJ",
+      "pos": [
+        -165.1764383122136,
+        532.3648555700865
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Save Original Input",
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "01_original_input",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "PrimitiveString_ISO",
+      "pos": [
+        -626.818139589856,
+        1042.84891975926
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            40,
+            43,
+            45
+          ]
+        }
+      ],
+      "title": "Input String (Source Data)",
+      "properties": {
+        "Node name for S&R": "PrimitiveString_ISO"
+      },
+      "widgets_values": [
+        "Contact Info: Email: john.doe@example.com, Phone: 555-123-4567. Project: PyIsolate v1.0 - Status: ACTIVE. Additional notes: Testing regex patterns, extracting data, and validating strings."
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 5,
+      "type": "StringContains_ISO",
+      "pos": [
+        209.6540040715574,
+        1183.873776789531
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "widget": {
+            "name": "string"
+          },
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "contains",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "title": "StringContains_ISO - Check for ACTIVE Status",
+      "properties": {
+        "Node name for S&R": "StringContains_ISO"
+      },
+      "widgets_values": [
+        "",
+        "ACTIVE",
+        true
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 6,
+      "type": "StringCompare_ISO",
+      "pos": [
+        -418.749289719366,
+        1580.839752928181
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "title": "StringCompare_ISO - Check Starts With",
+      "properties": {
+        "Node name for S&R": "StringCompare_ISO"
+      },
+      "widgets_values": [
+        "",
+        "Contact Info",
+        "Starts With",
+        true
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 10,
+      "type": "PrimitiveString_ISO",
+      "pos": [
+        -294.30555897718875,
+        1949.2641699016456
+      ],
+      "size": [
+        432.5205891508183,
+        151.17847111313586
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            41
+          ]
+        }
+      ],
+      "title": "Label for RegexMatch",
+      "properties": {
+        "Node name for S&R": "PrimitiveString_ISO"
+      },
+      "widgets_values": [
+        "RegexMatch result (PyIsolate version found): "
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 11,
+      "type": "StringConcatenate_ISO",
+      "pos": [
+        338.39074436894356,
+        1657.5632609859608
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 40
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            24,
+            37
+          ]
+        }
+      ],
+      "title": "Combine RegexMatch Label + Result",
+      "properties": {
+        "Node name for S&R": "StringConcatenate_ISO"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 17,
+      "type": "StringConcatenate_ISO",
+      "pos": [
+        421.0159992903042,
+        2590.3532565359037
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 45
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            28,
+            39
+          ]
+        }
+      ],
+      "title": "Combine StringCompare Label + Result",
+      "properties": {
+        "Node name for S&R": "StringConcatenate_ISO"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 14,
+      "type": "StringConcatenate_ISO",
+      "pos": [
+        394.88087737319364,
+        2258.2217719114874
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 43
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 42
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            26,
+            38
+          ]
+        }
+      ],
+      "title": "Combine StringContains Label + Result",
+      "properties": {
+        "Node name for S&R": "StringConcatenate_ISO"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 13,
+      "type": "PrimitiveString_ISO",
+      "pos": [
+        16.257046483378772,
+        2461.762833184277
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            42
+          ]
+        }
+      ],
+      "title": "Label for StringContains",
+      "properties": {
+        "Node name for S&R": "PrimitiveString_ISO"
+      },
+      "widgets_values": [
+        "StringContains result (has ACTIVE): "
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 19,
+      "type": "PrimitiveString_ISO",
+      "pos": [
+        -0.4879147787468382,
+        2770.248419762501
+      ],
+      "size": [
+        363.5179318936772,
+        77.22801815321691
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            44
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveString_ISO"
+      },
+      "widgets_values": [
+        "StringCompare result (starts with 'Contact Info'): "
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    }
+  ],
+  "links": [
+    [
+      15,
+      1,
+      0,
+      2,
+      0,
+      "STRING"
+    ],
+    [
+      16,
+      1,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      17,
+      1,
+      0,
+      4,
+      0,
+      "STRING"
+    ],
+    [
+      18,
+      1,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      19,
+      1,
+      0,
+      6,
+      0,
+      "STRING"
+    ],
+    [
+      20,
+      1,
+      0,
+      7,
+      0,
+      "STRING"
+    ],
+    [
+      21,
+      2,
+      0,
+      8,
+      0,
+      "STRING"
+    ],
+    [
+      22,
+      3,
+      0,
+      9,
+      0,
+      "STRING"
+    ],
+    [
+      24,
+      11,
+      0,
+      12,
+      0,
+      "STRING"
+    ],
+    [
+      26,
+      14,
+      0,
+      15,
+      0,
+      "STRING"
+    ],
+    [
+      28,
+      17,
+      0,
+      18,
+      0,
+      "STRING"
+    ],
+    [
+      35,
+      3,
+      0,
+      24,
+      0,
+      "*"
+    ],
+    [
+      36,
+      2,
+      0,
+      20,
+      0,
+      "*"
+    ],
+    [
+      37,
+      11,
+      0,
+      23,
+      0,
+      "*"
+    ],
+    [
+      38,
+      14,
+      0,
+      22,
+      0,
+      "*"
+    ],
+    [
+      39,
+      17,
+      0,
+      21,
+      0,
+      "*"
+    ],
+    [
+      40,
+      1,
+      0,
+      11,
+      0,
+      "STRING"
+    ],
+    [
+      41,
+      10,
+      0,
+      11,
+      1,
+      "STRING"
+    ],
+    [
+      42,
+      13,
+      0,
+      14,
+      1,
+      "STRING"
+    ],
+    [
+      43,
+      1,
+      0,
+      14,
+      0,
+      "STRING"
+    ],
+    [
+      44,
+      19,
+      0,
+      17,
+      1,
+      "STRING"
+    ],
+    [
+      45,
+      1,
+      0,
+      17,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.3558410273836905,
+      "offset": [
+        1852.0150349389437,
+        380.0151611351803
+      ]
+    },
+    "frontendVersion": "1.33.10",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

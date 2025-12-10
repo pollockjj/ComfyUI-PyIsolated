@@ -7,6 +7,7 @@ from .nodes import (
     PyIsolatedExecuteV3,
     PyIsolatedExecuteAdvancedV3,
     ZeroCopyArange,
+    TestCLIPProxy_APISO,
 )
 
 class PyIsolatedExtension(ComfyExtension):
@@ -16,6 +17,7 @@ class PyIsolatedExtension(ComfyExtension):
             PyIsolatedExecuteV3,
             PyIsolatedExecuteAdvancedV3,
             ZeroCopyArange,
+            TestCLIPProxy_APISO,
         ]
 
 

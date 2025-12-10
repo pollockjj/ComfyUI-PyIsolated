@@ -1,0 +1,785 @@
+{
+  "id": "88b9582c-1ab8-46fd-8dd0-83b36a8ea2b9",
+  "revision": 0,
+  "last_node_id": 208,
+  "last_link_id": 35,
+  "nodes": [
+    {
+      "id": 190,
+      "type": "PyIsolatedTestNodeV3",
+      "pos": [
+        -13.379903999999986,
+        297.35062329083263
+      ],
+      "size": [
+        181.540625,
+        26
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "STRING",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PyIsolatedTestNodeV3"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 194,
+      "type": "PyIsolatedTestNodeV3",
+      "pos": [
+        -492.8825588366698,
+        772.2314951633302
+      ],
+      "size": [
+        181.540625,
+        26
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "STRING",
+          "links": [
+            29,
+            30,
+            31,
+            32
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PyIsolatedTestNodeV3"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 199,
+      "type": "SaveImage",
+      "pos": [
+        8.203454156178529,
+        -948.4428234492535
+      ],
+      "size": [
+        439.8355999999999,
+        282
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 173,
+      "type": "SaveImage",
+      "pos": [
+        566.7259296029059,
+        -982.009802510619
+      ],
+      "size": [
+        491.56737163085893,
+        350.0375858154298
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 19
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76"
+      },
+      "widgets_values": [
+        "PyIsolatedExecuteV3"
+      ]
+    },
+    {
+      "id": 183,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        -108.27307554614262,
+        6.985032000000172
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "EmptySD3LatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ]
+    },
+    {
+      "id": 207,
+      "type": "StringConcatenate_ISO",
+      "pos": [
+        -119.65400039709444,
+        931.6790799999999
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 31
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 32
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringConcatenate_ISO"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 203,
+      "type": "StringConcatenate",
+      "pos": [
+        -73.1931799999998,
+        593.4996052908323
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 29
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            35
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 208,
+      "type": "Show any [Crystools]",
+      "pos": [
+        413.473746398605,
+        591.383799055154
+      ],
+      "size": [
+        337.0318359375,
+        148
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 35
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    },
+    {
+      "id": 193,
+      "type": "Show any [Crystools]",
+      "pos": [
+        549.4982212768557,
+        830.9948000000002
+      ],
+      "size": [
+        337.0318359375,
+        148
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 25
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    },
+    {
+      "id": 180,
+      "type": "LoadImage",
+      "pos": [
+        -276.6534613117674,
+        -383.00458340258774
+      ],
+      "size": [
+        274.080078125,
+        314
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            23,
+            24
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "LoadImage",
+        "image": "clipspace/clipspace-painted-masked-1765239848204.png [input]"
+      },
+      "widgets_values": [
+        "clipspace/clipspace-painted-masked-1765239848204.png [input]",
+        "image"
+      ]
+    },
+    {
+      "id": 189,
+      "type": "MaskPreview",
+      "pos": [
+        -580.2971599005733,
+        227.14683040585328
+      ],
+      "size": [
+        432.8199999999998,
+        258
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 24
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "MaskPreview"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 200,
+      "type": "Show any [Crystools]",
+      "pos": [
+        -856.6958703971056,
+        -509.3717314469069
+      ],
+      "size": [
+        449.27944302978506,
+        344.18939999999986
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 28
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    },
+    {
+      "id": 164,
+      "type": "SaveStringKJ",
+      "pos": [
+        1299.5247090345451,
+        -493.7932462622983
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.1.9",
+        "Node name for S&R": "SaveStringKJ"
+      },
+      "widgets_values": [
+        "PyIsolatedExecuteAdvancedV3",
+        "output",
+        ".txt"
+      ]
+    },
+    {
+      "id": 157,
+      "type": "Show any [Crystools]",
+      "pos": [
+        1215.2412266832828,
+        -260.4706355251105
+      ],
+      "size": [
+        627.9000004760741,
+        664.3392070922849
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "shape": 7,
+          "type": "*",
+          "link": 17
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-crystools",
+        "ver": "1.27.4",
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    },
+    {
+      "id": 198,
+      "type": "GeminiImage2Node_ISO",
+      "pos": [
+        -688.9643156739497,
+        -910.7462890567319
+      ],
+      "size": [
+        400,
+        252
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "files",
+          "shape": 7,
+          "type": "GEMINI_INPUT_FILES",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            33,
+            34
+          ]
+        },
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            28
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GeminiImage2Node_ISO"
+      },
+      "widgets_values": [
+        "an image of someone holding a hello world sign.\n",
+        "gemini-3-pro-image-preview",
+        908131530605474,
+        "randomize",
+        "auto",
+        "1K",
+        "IMAGE+TEXT"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 188,
+      "type": "PyIsolatedExecuteAdvancedV3",
+      "pos": [
+        233.99073000000018,
+        -420.9900354257811
+      ],
+      "size": [
+        880.3334228515624,
+        927.2667114257808
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_payload",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 33
+        },
+        {
+          "name": "latent_payload",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 22
+        },
+        {
+          "name": "mask_payload",
+          "shape": 7,
+          "type": "MASK",
+          "link": 23
+        },
+        {
+          "name": "text_payload",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "text_payload"
+          },
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result_text",
+          "type": "STRING",
+          "links": [
+            17,
+            18
+          ]
+        },
+        {
+          "name": "result_image",
+          "type": "IMAGE",
+          "links": [
+            19
+          ]
+        },
+        {
+          "name": "result_latent",
+          "type": "LATENT",
+          "links": null
+        },
+        {
+          "name": "stdout",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "exit_code",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PyIsolatedExecuteAdvancedV3"
+      },
+      "widgets_values": [
+        "# PyIsolated Advanced Demo: Full tensor + analytics\n# Access: text_payload, image_payload, latent_payload, mask_payload\nimport torch\nfrom io import StringIO\nfrom faker import Faker\nfrom slugify import slugify\nimport numpy as np\nimport pandas as pd\nimport networkx as nx\nfrom pydantic import BaseModel, ValidationError\nimport humanize\nfrom tabulate import tabulate\nimport more_itertools as mit\nfrom rich.console import Console\nfrom rich.table import Table\nfrom datetime import datetime, timedelta\nimport random\n\nresults = {}\nscenario = text_payload or \"PyIsolated Demo\"\nrng = random.Random(42)\nfaker = Faker()\nfaker.seed_instance(42)\n\n# =============================================================================\n# TENSOR PROCESSING\n# =============================================================================\n\nparts = []\nif text_payload:\n    parts.append(f\"📝 Text: '{text_payload[:50]}...' ({len(text_payload)} chars)\")\nif image_payload is not None:\n    parts.append(f\"🖼️  Image: {image_payload.shape}\")\nif latent_payload is not None:\n    samples = latent_payload.get(\"samples\")\n    if samples is not None:\n        parts.append(f\"🧬 Latent: {samples.shape}\")\nif mask_payload is not None:\n    parts.append(f\"🎭 Mask: {mask_payload.shape}\")\n\n# Image processing: mask-weighted blend + text-based tint\nif image_payload is not None:\n    img = image_payload.clone()\n    if mask_payload is not None:\n        mask = mask_payload\n        if mask.shape[1:] != img.shape[1:3]:\n            mask = torch.nn.functional.interpolate(\n                mask.unsqueeze(1), \n                size=(img.shape[1], img.shape[2]), \n                mode='bilinear'\n            ).squeeze(1)\n        mask_expanded = mask.unsqueeze(-1)\n        img = img * 0.3 + img * mask_expanded * 0.7\n    if text_payload:\n        tint = len(text_payload) % 3\n        img[:, :, :, tint] = torch.clamp(img[:, :, :, tint] * 1.15, 0, 1)\n    results[\"result_image\"] = img\n\n# Latent processing: text-scaled noise injection\nif latent_payload is not None:\n    samples = latent_payload[\"samples\"].clone()\n    noise_scale = 0.05 if not text_payload else min(len(text_payload) * 0.002, 0.2)\n    noise = torch.randn_like(samples) * noise_scale\n    samples = samples + noise\n    results[\"result_latent\"] = {\"samples\": samples}\n\n# =============================================================================\n# SOCIAL GRAPH ANALYTICS (showcasing installed dependencies)\n# =============================================================================\n\nclass User(BaseModel):\n    name: str\n    handle: str\n    followers: int\n    messages: int\n\nusers = []\nfor _ in range(8):\n    name = faker.name()\n    handle = slugify(name)\n    followers = rng.randint(50, 5000)\n    messages = rng.randint(5, 120)\n    users.append({\"name\": name, \"handle\": handle, \"followers\": followers, \"messages\": messages})\n\nvalidated = [User(**u) for u in users]\ndf = pd.DataFrame([u.dict() for u in validated])\ndf[\"msg_rate\"] = df[\"messages\"] / (df[\"followers\"] + 1)\ndf[\"score\"] = 0.7 * df[\"followers\"] + 0.3 * df[\"messages\"]\n\n# Build interaction graph\nG = nx.DiGraph()\nfor u in validated:\n    G.add_node(u.handle, followers=u.followers, messages=u.messages)\nfor a, b in mit.windowed([u.handle for u in validated], 2):\n    if b:\n        G.add_edge(a, b, weight=rng.randint(1, 10))\npagerank = nx.pagerank(G, weight=\"weight\")\ndf[\"pagerank\"] = df[\"handle\"].map(pagerank)\ntop = df.sort_values(by=[\"pagerank\"], ascending=False).head(5)\n\n# Rich table\nconsole_stream = StringIO()\nconsole = Console(file=console_stream, width=80, color_system=None)\ntable = Table(title=f\"🔬 {scenario}\")\ntable.add_column(\"handle\")\ntable.add_column(\"followers\", justify=\"right\")\ntable.add_column(\"pagerank\", justify=\"right\")\nfor _, row in top.iterrows():\n    table.add_row(row[\"handle\"], f\"{row['followers']}\", f\"{row['pagerank']:.4f}\")\nconsole.print(table)\n\n# Tabulate summary\nsummary = tabulate(\n    df[[\"handle\", \"followers\", \"messages\", \"msg_rate\"]].head(4),\n    headers=\"keys\",\n    tablefmt=\"github\",\n    floatfmt=\".4f\",\n)\n\nelapsed = humanize.naturaldelta(timedelta(seconds=2.7))\n\n# =============================================================================\n# FINAL OUTPUT\n# =============================================================================\n\nresults[\"result_text\"] = \"\\n\".join([\n    \"=\" * 60,\n    \"🔒 PyIsolated Advanced Demo\",\n    \"=\" * 60,\n    \"\",\n    \"📊 INPUTS RECEIVED:\",\n    *[f\"  {p}\" for p in parts],\n    \"\",\n    f\"🌐 GRAPH ANALYTICS:\",\n    f\"  Nodes: {G.number_of_nodes()} | Edges: {G.number_of_edges()}\",\n    f\"  Elapsed: {elapsed}\",\n    \"\",\n    \"🏆 TOP PAGERANK:\",\n    console_stream.getvalue().strip(),\n    \"\",\n    \"📈 METRICS SAMPLE:\",\n    summary,\n    \"\",\n    \"=\" * 60,\n])\n\nprint(results[\"result_text\"])\nresult = results",
+        "",
+        "faker\npython-slugify\nnumpy\npandas\nnetworkx\npydantic\nhumanize\ntabulate\nmore-itertools\nrich"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    }
+  ],
+  "links": [
+    [
+      17,
+      188,
+      0,
+      157,
+      0,
+      "*"
+    ],
+    [
+      18,
+      188,
+      0,
+      164,
+      0,
+      "STRING"
+    ],
+    [
+      19,
+      188,
+      1,
+      173,
+      0,
+      "IMAGE"
+    ],
+    [
+      20,
+      190,
+      0,
+      188,
+      3,
+      "STRING"
+    ],
+    [
+      22,
+      183,
+      0,
+      188,
+      1,
+      "LATENT"
+    ],
+    [
+      23,
+      180,
+      1,
+      188,
+      2,
+      "MASK"
+    ],
+    [
+      24,
+      180,
+      1,
+      189,
+      0,
+      "MASK"
+    ],
+    [
+      25,
+      207,
+      0,
+      193,
+      0,
+      "*"
+    ],
+    [
+      28,
+      198,
+      1,
+      200,
+      0,
+      "*"
+    ],
+    [
+      29,
+      194,
+      0,
+      203,
+      0,
+      "STRING"
+    ],
+    [
+      30,
+      194,
+      0,
+      203,
+      1,
+      "STRING"
+    ],
+    [
+      31,
+      194,
+      0,
+      207,
+      0,
+      "STRING"
+    ],
+    [
+      32,
+      194,
+      0,
+      207,
+      1,
+      "STRING"
+    ],
+    [
+      33,
+      198,
+      0,
+      188,
+      0,
+      "IMAGE"
+    ],
+    [
+      34,
+      198,
+      0,
+      199,
+      0,
+      "IMAGE"
+    ],
+    [
+      35,
+      203,
+      0,
+      208,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.5131581182307069,
+      "offset": [
+        1056.2206103512744,
+        1215.2761109913986
+      ]
+    },
+    "frontendVersion": "1.33.10",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
