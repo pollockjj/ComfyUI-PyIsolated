@@ -509,46 +509,6 @@
       "bgcolor": "#355"
     },
     {
-      "id": 100,
-      "type": "EasyCache_ISO",
-      "pos": [
-        895.0398102333676,
-        -116.29349482598286
-      ],
-      "size": [
-        270,
-        130
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 268
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            269
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "EasyCache_ISO"
-      },
-      "widgets_values": [
-        0.2,
-        0.15,
-        0.95,
-        false
-      ]
-    },
-    {
       "id": 72,
       "type": "SamplerCustom",
       "pos": [
@@ -616,7 +576,7 @@
       },
       "widgets_values": [
         true,
-        5770524,
+        5770526,
         "increment",
         3
       ]
@@ -668,6 +628,51 @@
       "widgets_values": [
         "ltx-video-2b-v0.9.5.safetensors"
       ]
+    },
+    {
+      "id": 100,
+      "type": "EasyCache_ISO",
+      "pos": [
+        895.0398102333676,
+        -116.29349482598286
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 268
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            269
+          ]
+        }
+      ],
+      "title": "EasyCache_ISO***",
+      "properties": {
+        "Node name for S&R": "EasyCache_ISO"
+      },
+      "widgets_values": [
+        0.2,
+        0.15,
+        0.95,
+        false
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
     }
   ],
   "links": [
@@ -836,10 +841,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7938036036036038,
+      "scale": 0.5963963963963967,
       "offset": [
-        118.22499267470673,
-        344.7295244467435
+        183.41152291490323,
+        752.616054082436
       ]
     },
     "frontendVersion": "1.33.10",

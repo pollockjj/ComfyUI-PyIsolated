@@ -16,7 +16,7 @@
         270
       ],
       "flags": {},
-      "order": 4,
+      "order": 2,
       "mode": 0,
       "inputs": [
         {
@@ -46,7 +46,7 @@
         270
       ],
       "flags": {},
-      "order": 2,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
@@ -65,65 +65,6 @@
       ]
     },
     {
-      "id": 3,
-      "type": "GeminiImage2Node_ISO",
-      "pos": [
-        53.3333740234375,
-        107.33334350585938
-      ],
-      "size": [
-        400,
-        252
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "shape": 7,
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "files",
-          "shape": 7,
-          "type": "GEMINI_INPUT_FILES",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            6
-          ]
-        },
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            5
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GeminiImage2Node_ISO"
-      },
-      "widgets_values": [
-        "an image of someone holding a hello world sign.\n",
-        "gemini-3-pro-image-preview",
-        5770521,
-        "fixed",
-        "auto",
-        "1K",
-        "IMAGE+TEXT"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 4,
       "type": "GeminiImage2Node",
       "pos": [
@@ -132,10 +73,10 @@
       ],
       "size": [
         400,
-        252
+        298
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [
         {
@@ -193,10 +134,10 @@
       ],
       "size": [
         337.0318359375,
-        148
+        160
       ],
       "flags": {},
-      "order": 3,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -222,10 +163,10 @@
       ],
       "size": [
         337.0318359375,
-        148
+        160
       ],
       "flags": {},
-      "order": 5,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -241,6 +182,65 @@
         "ver": "1.27.4",
         "Node name for S&R": "Show any [Crystools]"
       }
+    },
+    {
+      "id": 3,
+      "type": "GeminiImage2Node_ISO",
+      "pos": [
+        53.3333740234375,
+        107.33334350585938
+      ],
+      "size": [
+        400,
+        298
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "files",
+          "shape": 7,
+          "type": "GEMINI_INPUT_FILES",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GeminiImage2Node_ISO"
+      },
+      "widgets_values": [
+        "an image of someone holding a hello world sign.\n",
+        "gemini-3-pro-image-preview",
+        5770521,
+        "fixed",
+        "auto",
+        "1K",
+        "IMAGE+TEXT"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
     }
   ],
   "links": [
@@ -283,11 +283,16 @@
     "ds": {
       "scale": 1,
       "offset": [
-        538.0993256206817,
-        213.1617335776707
+        201.43265386775204,
+        217.1617335776707
       ]
     },
-    "frontendVersion": "1.33.10"
+    "frontendVersion": "1.33.10",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
   },
   "version": 0.4
 }
