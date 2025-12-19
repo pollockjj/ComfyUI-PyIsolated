@@ -9,6 +9,12 @@ from .nodes import (
     ZeroCopyArange,
     TestCLIPProxy_APISO,
 )
+from .nodes_adversarial import (
+    AdversarialSummary,
+    AdversarialFilesystemRead,
+    AdversarialFilesystemWrite,
+    AdversarialEnvLeak,
+)
 
 class PyIsolatedExtension(ComfyExtension):
     async def get_node_list(self):
@@ -18,6 +24,11 @@ class PyIsolatedExtension(ComfyExtension):
             PyIsolatedExecuteAdvancedV3,
             ZeroCopyArange,
             TestCLIPProxy_APISO,
+            # Adversarial test nodes for sandbox verification
+            AdversarialSummary,
+            AdversarialFilesystemRead,
+            AdversarialFilesystemWrite,
+            AdversarialEnvLeak,
         ]
 
 
