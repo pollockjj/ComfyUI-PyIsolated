@@ -1,3 +1,6 @@
 isolated: true
 share_torch: true
-sandbox: false
+# sandbox disabled - enable only for explicit sandbox testing
+# sandbox:
+#   mode: required
+#   network: true

