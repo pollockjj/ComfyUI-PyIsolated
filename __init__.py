@@ -9,12 +9,7 @@ from .nodes import (
     ZeroCopyArange,
     TestCLIPProxy_APISO,
 )
-from .nodes_adversarial import (
-    AdversarialSummary,
-    AdversarialFilesystemRead,
-    AdversarialFilesystemWrite,
-    AdversarialEnvLeak,
-)
+from .nodes_adversarial import AdversarialSummary
 from .nodes_security_audit import SecurityAudit
 
 class PyIsolatedExtension(ComfyExtension):
@@ -25,12 +20,7 @@ class PyIsolatedExtension(ComfyExtension):
             PyIsolatedExecuteAdvancedV3,
             ZeroCopyArange,
             TestCLIPProxy_APISO,
-            # Adversarial test nodes for sandbox verification
             AdversarialSummary,
-            AdversarialFilesystemRead,
-            AdversarialFilesystemWrite,
-            AdversarialEnvLeak,
-            # Security audit
             SecurityAudit,
         ]
 
