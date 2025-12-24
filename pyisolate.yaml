@@ -1,6 +1,5 @@
+# Legacy manifest - pyproject.toml is authoritative
 isolated: true
+sandbox: true
 share_torch: true
-# sandbox disabled - enable only for explicit sandbox testing
-# sandbox:
-#   mode: required
-#   network: true
+dependencies: []

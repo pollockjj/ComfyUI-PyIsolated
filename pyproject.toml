@@ -1,0 +1,9 @@
+[project]
+name = "comfyui-pyisolatedv3"
+version = "0.1.0"
+description = "PyIsolate V3 ComfyUI integration"
+
+[tool.pyisolate]
+can_isolate = true
+can_sandbox = true
+share_torch = true
