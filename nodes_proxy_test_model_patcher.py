@@ -169,6 +169,9 @@ class ProxyTestModelPatcher(io.ComfyNode):
         test("add_object_patch('test')", lambda: model.add_object_patch('test_obj', 'test_value'))
         test("verify object_patch added", lambda: 'test_obj' in model.object_patches,
              verify=lambda x: x == True)
+        
+        # Clean up test object patch before lifecycle tests
+        test("remove test object_patch", lambda: model.object_patches.pop('test_obj', None))
 
         # =====================================================================
         # 6. Hooks & Injection
