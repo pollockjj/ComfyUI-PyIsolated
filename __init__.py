@@ -11,6 +11,10 @@ from .nodes import (
 )
 from .nodes_adversarial import AdversarialSummary
 from .nodes_security_audit import SecurityAudit
+from .nodes_proxy_test_model_management import ProxyTestModelManagement
+from .nodes_proxy_test_folder_paths import ProxyTestFolderPaths
+from .nodes_proxy_test_utils import ProxyTestUtils
+from .nodes_proxy_test_latent_formats import ProxyTestLatentFormats
 
 class PyIsolatedExtension(ComfyExtension):
     async def get_node_list(self):
@@ -22,6 +26,10 @@ class PyIsolatedExtension(ComfyExtension):
             TestCLIPProxy_APISO,
             AdversarialSummary,
             SecurityAudit,
+            ProxyTestModelManagement,
+            ProxyTestFolderPaths,
+            ProxyTestUtils,
+            ProxyTestLatentFormats,
         ]
 
 
