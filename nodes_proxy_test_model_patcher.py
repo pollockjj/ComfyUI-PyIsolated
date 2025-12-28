@@ -314,9 +314,30 @@ class ProxyTestModelPatcher(io.ComfyNode):
         # Fixed: Use Tensor for value to avoid patch_model crash
         dummy_tensor = torch.zeros(1)
         if valid_key:
+             # Verify add_patches works and returns list
              verify("add_patches", 
-                   lambda: (model.add_patches({valid_key: dummy_tensor}, {valid_key: "s"}), model.patches[valid_key])[-1],
+                   lambda: (model.add_patches({valid_key: dummy_tensor}, 1.0, 1.0), model.patches[valid_key])[-1],
                    check=lambda list_res: len(list_res) > 0 and isinstance(list_res[0], tuple))
+
+             # Verify get_key_patches works (no filter)
+             verify("get_key_patches", 
+                   lambda: model.get_key_patches(), 
+                   check=lambda res: isinstance(res, dict) and valid_key in res)
+
+             # Verify get_key_patches works (with filter)
+             verify("get_key_patches(filter)", 
+                   lambda: model.get_key_patches(filter_prefix=valid_key[:3]), 
+                   check=lambda res: isinstance(res, dict) and valid_key in res)
+                   
+             # Verify model_state_dict works (no filter)
+             verify("model_state_dict", 
+                   lambda: model.model_state_dict(), 
+                   check=lambda res: isinstance(res, dict) and valid_key in res)
+                   
+             # Verify model_state_dict works (with filter)
+             verify("model_state_dict(filter)", 
+                   lambda: model.model_state_dict(filter_prefix=valid_key[:3]), 
+                   check=lambda res: isinstance(res, dict) and valid_key in res)
         
         verify("cleanup", 
                lambda: (model.cleanup(), model.current_hooks is None)[-1],
