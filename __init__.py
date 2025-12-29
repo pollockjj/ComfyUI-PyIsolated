@@ -16,6 +16,9 @@ from .nodes_proxy_test_folder_paths import ProxyTestFolderPaths
 from .nodes_proxy_test_utils import ProxyTestUtils
 from .nodes_proxy_test_latent_formats import ProxyTestLatentFormats
 from .nodes_proxy_test_model_patcher import ProxyTestModelPatcher
+from .nodes_proxy_test_clip import ProxyTestCLIP
+from .nodes_proxy_test_vae import ProxyTestVAE
+from .nodes_proxy_test_model_sampler import ProxyTestModelSampler
 
 class PyIsolatedExtension(ComfyExtension):
     async def get_node_list(self):
@@ -32,6 +35,9 @@ class PyIsolatedExtension(ComfyExtension):
             ProxyTestUtils,
             ProxyTestLatentFormats,
             ProxyTestModelPatcher,
+            ProxyTestCLIP,
+            ProxyTestVAE,
+            ProxyTestModelSampler,
         ]
 
 
