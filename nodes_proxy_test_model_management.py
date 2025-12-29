@@ -177,7 +177,7 @@ class ProxyTestModelManagement(io.ComfyNode):
         verify("mac_version() is tuple or None", lambda: mm.mac_version() is None or isinstance(mm.mac_version(), tuple), check=lambda x: x is True)
         
         # =====================================================================
-        # GROUP 4: MEMORY FUNCTIONS (8 tests)
+        # GROUP 4: MEMORY FUNCTIONS (7 tests)
         # =====================================================================
         lines.append("")
         lines.append("-" * 40)
@@ -189,7 +189,8 @@ class ProxyTestModelManagement(io.ComfyNode):
         verify("extra_reserved_memory() >= 0", lambda: mm.extra_reserved_memory() >= 0, check=lambda x: x is True)
         verify("minimum_inference_memory() > 0", lambda: mm.minimum_inference_memory() > 0, check=lambda x: x is True)
         verify("maximum_vram_for_weights() >= 0", lambda: mm.maximum_vram_for_weights() >= 0, check=lambda x: x is True)
-        verify("module_size(model.model) > 0", lambda: mm.module_size(model.model) > 0, check=lambda x: x is True, pre_check=lambda: hasattr(model, 'model') and model.model is not None)
+        # module_size() is public API - call it on the server via ModelPatcherProxy.model_size() instead
+        verify("model.model_size() > 0", lambda: model.model_size() > 0, check=lambda x: x is True)
         verify("cleanup_models() returns None", lambda: mm.cleanup_models() is None, check=lambda x: x is True)
         verify("cleanup_models_gc() returns None", lambda: mm.cleanup_models_gc() is None, check=lambda x: x is True)
         
