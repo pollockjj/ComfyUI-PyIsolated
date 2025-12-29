@@ -85,6 +85,7 @@ class ProxyTestModelSampler(io.ComfyNode):
         verify("sigma_min", lambda: sampler.sigma_min, check=lambda x: isinstance(x, (float, torch.Tensor)))
         verify("sigma_max", lambda: sampler.sigma_max, check=lambda x: isinstance(x, (float, torch.Tensor)))
         verify("sigma_data", lambda: sampler.sigma_data, check=lambda x: isinstance(x, (float, torch.Tensor)))
+        verify("sigmas (buffer)", lambda: sampler.sigmas, check=lambda x: isinstance(x, torch.Tensor))
 
         # =====================================================================
         # 2. CALCULATION METHODS
