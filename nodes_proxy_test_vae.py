@@ -121,6 +121,24 @@ class ProxyTestVAE(io.ComfyNode):
         verify("working_dtypes", lambda: vae.working_dtypes, check=lambda x: isinstance(x, list))
         
         # =====================================================================
+        # 1a. INTERNAL STRUCTURE (Isolation Critical)
+        # =====================================================================
+        lines.append("-" * 40)
+        lines.append("1a. INTERNAL STRUCTURE")
+        lines.append("-" * 40)
+
+        verify("device", lambda: vae.device, check=lambda x: str(x).startswith("cuda") or str(x).startswith("cpu"))
+        verify("vae_dtype", lambda: vae.vae_dtype, check=lambda x: x is not None)
+            
+        # These access internal structure via Proxies in isolation
+        verify("patcher_access", lambda: vae.patcher, check=lambda x: x is not None)
+        
+        # first_stage_model: Should check basic attribute access to ensure proxy works
+        def check_fsm():
+             return hasattr(vae.first_stage_model, "encode") or hasattr(vae.first_stage_model, "decode")
+        verify("first_stage_model_access", check_fsm, check=lambda x: x is True)
+        
+        # =====================================================================
         # 2. MEMORY AND PROCESSING
         # =====================================================================
         lines.append("-" * 40)
