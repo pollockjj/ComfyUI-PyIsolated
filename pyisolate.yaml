@@ -1,6 +1,0 @@
-# Legacy manifest - pyproject.toml is authoritative
-isolated: true
-sandbox: true
-share_torch: true
-share_cuda_ipc: true
-dependencies: []
