@@ -1,6 +1,6 @@
 # ComfyUI Isolation System Architecture
 
-Current location: 
+Current fork:  https://github.com/pollockjj/ComfyUI/tree/pyisolate
 
 This document provides a rapid bootstrapping guide for understanding the ComfyUI process isolation framework built on `pyisolate`.
 
