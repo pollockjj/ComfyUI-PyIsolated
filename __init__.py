@@ -19,6 +19,8 @@ from .nodes_proxy_test_model_patcher import ProxyTestModelPatcher
 from .nodes_proxy_test_clip import ProxyTestCLIP
 from .nodes_proxy_test_vae import ProxyTestVAE
 from .nodes_proxy_test_model_sampler import ProxyTestModelSampler
+from .nodes_proxy_test_cli_args import ProxyTestCliArgs
+from .nodes_proxy_test_preview_pipeline import ProxyTestPreviewPipeline
 from .nodes_gate import GateAny
 
 class PyIsolatedExtension(ComfyExtension):
@@ -39,6 +41,8 @@ class PyIsolatedExtension(ComfyExtension):
             ProxyTestCLIP,
             ProxyTestVAE,
             ProxyTestModelSampler,
+            ProxyTestCliArgs,
+            ProxyTestPreviewPipeline,
             GateAny,
         ]
 
