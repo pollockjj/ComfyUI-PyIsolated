@@ -6,3 +6,16 @@ description = "PyIsolate V3 ComfyUI integration"
 [tool.comfy.isolation]
 can_isolate = true
 share_torch = true
+
+[tool.ruff]
+lint.select = [
+  "N805",  # invalid-first-argument-name-for-method
+  "S307",  # suspicious-eval-usage
+  "S102",  # exec
+  "E",
+  "T",     # print-usage
+  "W",
+  "F",
+]
+lint.ignore = ["E501", "E722", "E731", "E712", "E402", "E741"]
+exclude = ["*.ipynb"]
