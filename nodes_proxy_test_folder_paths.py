@@ -7,7 +7,6 @@ Outputs coverage report for baseline comparison.
 """
 from __future__ import annotations
 
-import os
 
 import folder_paths
 from comfy_api.latest import io
@@ -54,7 +53,7 @@ PROXY_METHODS_WITH_ARGS = [
 
 class ProxyTestFolderPaths(io.ComfyNode):
     """Systematic test of folder_paths proxy - tests ALL proxy members."""
-    
+
     @classmethod
     def define_schema(cls) -> io.Schema:
         return io.Schema(
@@ -74,17 +73,17 @@ class ProxyTestFolderPaths(io.ComfyNode):
         passed = 0
         failed = 0
         skipped = 0
-        
+
         lines.append("=" * 60)
         lines.append("FOLDER PATHS PROXY COVERAGE REPORT")
         lines.append("=" * 60)
         lines.append("")
-        
+
         # Section 1: Properties
         lines.append("-" * 40)
         lines.append("PROPERTIES")
         lines.append("-" * 40)
-        
+
         for prop_name in PROXY_PROPERTIES:
             tested += 1
             try:
@@ -97,12 +96,12 @@ class ProxyTestFolderPaths(io.ComfyNode):
             except Exception as e:
                 lines.append(f"[FAIL] {prop_name}: {type(e).__name__}: {e}")
                 failed += 1
-        
+
         lines.append("")
         lines.append("-" * 40)
         lines.append("METHODS (no args)")
         lines.append("-" * 40)
-        
+
         for method_name in PROXY_METHODS_NO_ARGS:
             tested += 1
             try:
@@ -116,12 +115,12 @@ class ProxyTestFolderPaths(io.ComfyNode):
             except Exception as e:
                 lines.append(f"[FAIL] {method_name}(): {type(e).__name__}: {e}")
                 failed += 1
-        
+
         lines.append("")
         lines.append("-" * 40)
         lines.append("METHODS (with args)")
         lines.append("-" * 40)
-        
+
         # get_folder_paths
         tested += 1
         try:
@@ -131,7 +130,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_folder_paths('checkpoints'): {e}")
             failed += 1
-        
+
         # get_folder_paths - loras
         tested += 1
         try:
@@ -141,7 +140,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_folder_paths('loras'): {e}")
             failed += 1
-        
+
         # get_filename_list
         tested += 1
         try:
@@ -151,7 +150,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_filename_list('checkpoints'): {e}")
             failed += 1
-        
+
         # get_filename_list - loras
         tested += 1
         try:
@@ -161,7 +160,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_filename_list('loras'): {e}")
             failed += 1
-        
+
         # get_directory_by_type
         tested += 1
         try:
@@ -171,7 +170,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_directory_by_type('output'): {e}")
             failed += 1
-        
+
         # get_system_user_directory
         tested += 1
         try:
@@ -181,7 +180,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_system_user_directory(): {e}")
             failed += 1
-        
+
         # map_legacy
         tested += 1
         try:
@@ -191,7 +190,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] map_legacy('checkpoints'): {e}")
             failed += 1
-        
+
         # annotated_filepath
         tested += 1
         try:
@@ -201,7 +200,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] annotated_filepath('test.png'): {e}")
             failed += 1
-        
+
         # exists_annotated_filepath
         tested += 1
         try:
@@ -211,7 +210,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] exists_annotated_filepath(): {e}")
             failed += 1
-        
+
         # filter_files_extensions
         tested += 1
         try:
@@ -221,7 +220,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] filter_files_extensions(): {e}")
             failed += 1
-        
+
         # get_filename_list_
         tested += 1
         try:
@@ -231,7 +230,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_filename_list_('checkpoints'): {e}")
             failed += 1
-        
+
         # cached_filename_list_
         tested += 1
         try:
@@ -239,12 +238,12 @@ class ProxyTestFolderPaths(io.ComfyNode):
             if result is not None:
                 lines.append(f"[PASS] cached_filename_list_('checkpoints') = tuple of {len(result)} items")
             else:
-                lines.append(f"[PASS] cached_filename_list_('checkpoints') = None (no cache)")
+                lines.append("[PASS] cached_filename_list_('checkpoints') = None (no cache)")
             passed += 1
         except Exception as e:
             lines.append(f"[FAIL] cached_filename_list_('checkpoints'): {e}")
             failed += 1
-        
+
         # get_save_image_path (complex)
         tested += 1
         try:
@@ -255,7 +254,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         except Exception as e:
             lines.append(f"[FAIL] get_save_image_path(): {e}")
             failed += 1
-        
+
         # Summary
         lines.append("")
         lines.append("=" * 60)
@@ -270,7 +269,7 @@ class ProxyTestFolderPaths(io.ComfyNode):
         coverage = (passed / tested * 100) if tested > 0 else 0
         lines.append(f"Coverage: {coverage:.1f}%")
         lines.append("=" * 60)
-        
+
         report = "\n".join(lines)
         return io.NodeOutput(report)
 

@@ -8,13 +8,9 @@ NO proxy knowledge - pure CLIP API testing.
 from __future__ import annotations
 
 import torch
-import copy
 from typing import Any, Callable
 
 from comfy_api.latest import io
-import comfy.model_management
-import comfy.sd
-import comfy.utils
 
 class ProxyTestCLIP(io.ComfyNode):
     """Comprehensive CLIP functionality test - verifies actual behavior."""
@@ -39,7 +35,7 @@ class ProxyTestCLIP(io.ComfyNode):
         # CRITICAL: Isolate tests from the rest of the workflow.
         # This test node modifies state; working on a clone protects the original.
         clip = clip.clone()
-        
+
         lines = []
         tested = 0
         passed = 0
@@ -57,7 +53,7 @@ class ProxyTestCLIP(io.ComfyNode):
                   expect_error: type[Exception] | None = None) -> Any:
             nonlocal tested, passed, failed
             tested += 1
-            
+
             if pre_check:
                 try:
                     if not pre_check():
@@ -71,12 +67,12 @@ class ProxyTestCLIP(io.ComfyNode):
 
             try:
                 res = action()
-                
+
                 if expect_error:
                     lines.append(f"[FAIL] {name} - Expected {expect_error.__name__}, got Success")
                     failed += 1
                     return res
-                
+
                 if check:
                     if check(res):
                         lines.append(f"[PASS] {name}")
@@ -91,10 +87,10 @@ class ProxyTestCLIP(io.ComfyNode):
                     lines.append(f"[PASS] {name}")
                     passed += 1
                 return res
-                
+
             except Exception as e:
                 if expect_error:
-                    if isinstance(e, expect_error) or (isinstance(expect_error, tuple) and isinstance(e, expect_error)): 
+                    if isinstance(e, expect_error) or (isinstance(expect_error, tuple) and isinstance(e, expect_error)):
                          lines.append(f"[PASS] {name} - Expected error caught: {type(e).__name__}")
                          passed += 1
                     else:
@@ -114,25 +110,25 @@ class ProxyTestCLIP(io.ComfyNode):
 
         verify("patcher_access", lambda: clip.patcher, check=lambda x: x is not None)
         verify("layer_idx_default", lambda: clip.layer_idx, check=lambda x: x is None)
-        
+
         # Setter Tests
-        verify("set_layer_idx", 
-               lambda: (clip.clip_layer( -2 ), clip.layer_idx)[-1], 
+        verify("set_layer_idx",
+               lambda: (clip.clip_layer( -2 ), clip.layer_idx)[-1],
                check=lambda x: x == -2)
-               
+
         verify("tokenizer_options_access", lambda: isinstance(clip.tokenizer_options, dict), check=lambda x: True)
-        verify("set_tokenizer_option", 
-               lambda: (clip.set_tokenizer_option("test_opt", 123), clip.tokenizer_options.get("test_opt"))[-1], 
+        verify("set_tokenizer_option",
+               lambda: (clip.set_tokenizer_option("test_opt", 123), clip.tokenizer_options.get("test_opt"))[-1],
                check=lambda x: x == 123)
-               
+
         verify("use_clip_schedule_default", lambda: clip.use_clip_schedule, check=lambda x: x is False)
-        
+
         # Test property setter if accessible, or modifications
         def set_schedule():
             clip.use_clip_schedule = True
             return clip.use_clip_schedule
         verify("set_use_clip_schedule", set_schedule, check=lambda x: x is True)
-        
+
         verify("apply_hooks_to_conds_access", lambda: clip.apply_hooks_to_conds, check=lambda x: True) # None or value
 
         verify("get_ram_usage", lambda: clip.get_ram_usage(), check=lambda x: isinstance(x, int))
@@ -143,29 +139,29 @@ class ProxyTestCLIP(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("2. ENCODING")
         lines.append("-" * 40)
-        
+
         # Tokenize
         tokens = verify("tokenize", lambda: clip.tokenize(text), check=lambda x: isinstance(x, dict))
-        
+
         if tokens:
             # Encode from Tokens (default: just cond)
-            verify("encode_from_tokens(cond_only)", 
-                   lambda: clip.encode_from_tokens(tokens, return_pooled=False), 
+            verify("encode_from_tokens(cond_only)",
+                   lambda: clip.encode_from_tokens(tokens, return_pooled=False),
                    check=lambda x: isinstance(x, torch.Tensor))
-            
+
             # Encode from Tokens (return_pooled=True) -> Tuple Check!
-            verify("encode_from_tokens(pooled=True)", 
-                   lambda: clip.encode_from_tokens(tokens, return_pooled=True), 
+            verify("encode_from_tokens(pooled=True)",
+                   lambda: clip.encode_from_tokens(tokens, return_pooled=True),
                    check=lambda x: isinstance(x, tuple) and len(x) == 2)
-            
+
             # Encode from Tokens (return_dict=True) -> Dict
-            verify("encode_from_tokens(dict=True)", 
-                   lambda: clip.encode_from_tokens(tokens, return_dict=True), 
+            verify("encode_from_tokens(dict=True)",
+                   lambda: clip.encode_from_tokens(tokens, return_dict=True),
                    check=lambda x: isinstance(x, dict) and "cond" in x and "pooled_output" in x)
-        
+
         # Direct Encode
-        verify("encode", 
-               lambda: clip.encode(text), 
+        verify("encode",
+               lambda: clip.encode(text),
                check=lambda x: isinstance(x, torch.Tensor))
 
         # =====================================================================
@@ -176,15 +172,15 @@ class ProxyTestCLIP(io.ComfyNode):
         lines.append("-" * 40)
 
         verify("get_key_patches", lambda: clip.get_key_patches(), check=lambda x: isinstance(x, dict))
-        
+
         # Test add_patches (delegates to patcher)
-        verify("add_patches", 
-               lambda: clip.add_patches({}, 1.0, 1.0), 
+        verify("add_patches",
+               lambda: clip.add_patches({}, 1.0, 1.0),
                check=lambda x: isinstance(x, list) or isinstance(x, tuple)) # Core returns tuple/list
 
         # Verify load_model
-        verify("load_model", 
-               lambda: clip.load_model(), 
+        verify("load_model",
+               lambda: clip.load_model(),
                check=lambda x: x is not None) # Returns patcher
 
         # =====================================================================
@@ -193,16 +189,16 @@ class ProxyTestCLIP(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("4. IDENTITY & CLONING")
         lines.append("-" * 40)
-        
+
         new_clip = verify("clone", lambda: clip.clone(), check=lambda x: x is not None and x is not clip)
-        
+
         if new_clip:
-            verify("clone_independence", 
-                   lambda: new_clip.patcher is not clip.patcher, 
+            verify("clone_independence",
+                   lambda: new_clip.patcher is not clip.patcher,
                    check=lambda x: True) # Should have different patcher instances (proxies)
-                   
+
             # Verify new clip works
-            verify("clone_encode", 
+            verify("clone_encode",
                    lambda: new_clip.encode(text),
                    check=lambda x: isinstance(x, torch.Tensor))
 
@@ -214,11 +210,11 @@ class ProxyTestCLIP(io.ComfyNode):
         lines.append("-" * 40)
 
         verify("get_sd", lambda: clip.get_sd(), check=lambda x: isinstance(x, dict))
-        
-        # Verify load_sd matches signature, but tough to test without real weights 
+
+        # Verify load_sd matches signature, but tough to test without real weights
         # So we just ensure method exists and args valid
         # We can pass empty dict and expect it to handle (or fail specific way)
-        # verify("load_sd", lambda: clip.load_sd({}), expect_error=Exception) 
+        # verify("load_sd", lambda: clip.load_sd({}), expect_error=Exception)
 
         lines.append("")
         lines.append("=" * 60)

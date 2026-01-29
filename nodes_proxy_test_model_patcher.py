@@ -9,14 +9,12 @@ from __future__ import annotations
 
 import torch
 from typing import Any, Callable
-import uuid
 
 from comfy_api.latest import io
 import comfy.model_management
 import comfy.hooks
 import comfy.sd
 import comfy.utils
-import folder_paths
 
 
 class ProxyTestModelPatcher(io.ComfyNode):
@@ -44,7 +42,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
         # CRITICAL: Isolate tests from the rest of the workflow.
         # This test node modifies model state (patches, options); working on a clone protects the original.
         model = model.clone()
-        
+
         lines = []
         tested = 0
         passed = 0
@@ -65,7 +63,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
                   expect_error: type[Exception] | None = None) -> Any:
             nonlocal tested, passed, failed, skipped
             tested += 1
-            
+
             # Pre-condition check (optional)
             if pre_check:
                 try:
@@ -80,12 +78,12 @@ class ProxyTestModelPatcher(io.ComfyNode):
 
             try:
                 res = action()
-                
+
                 if expect_error:
                     lines.append(f"[FAIL] {name} - Expected {expect_error.__name__}, got Success")
                     failed += 1
                     return res
-                
+
                 if check:
                     if check(res):
                         lines.append(f"[PASS] {name}")
@@ -102,10 +100,10 @@ class ProxyTestModelPatcher(io.ComfyNode):
                     lines.append(f"[PASS] {name}")
                     passed += 1
                 return res
-                
+
             except Exception as e:
                 if expect_error:
-                    if isinstance(e, expect_error) or (isinstance(expect_error, tuple) and isinstance(e, expect_error)): 
+                    if isinstance(e, expect_error) or (isinstance(expect_error, tuple) and isinstance(e, expect_error)):
                          lines.append(f"[PASS] {name} - Expected error caught: {type(e).__name__}")
                          passed += 1
                     else:
@@ -119,11 +117,11 @@ class ProxyTestModelPatcher(io.ComfyNode):
         # =====================================================================
         # GROUP 1: PUBLIC METHODS
         # =====================================================================
-        
+
         lines.append("-" * 40)
         lines.append("1. CALLBACKS & WRAPPERS (Read-Only Verification)")
         lines.append("-" * 40)
-        
+
         # Verify read access to callbacks/wrappers (should be empty or contain LoRA/Standard ones)
         # Fixed: get_all_callbacks requires call_type
         verify("get_all_callbacks",
@@ -135,7 +133,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
                lambda: isinstance(model.get_all_wrappers("admin"), list),
                check=lambda x: x is True)
 
-               
+
         verify("_load_list", lambda: model._load_list(), check=lambda x: isinstance(x, list))
 
 
@@ -181,17 +179,17 @@ class ProxyTestModelPatcher(io.ComfyNode):
 
         keys = list(model.model_state_dict().keys())
         valid_key = keys[0] if keys else None
-        
+
         if valid_key:
-            verify("pin_weight_to_device", 
+            verify("pin_weight_to_device",
                    lambda: (model.pin_weight_to_device(valid_key), valid_key in model.pinned)[-1],
                    check=lambda x: x is True)
-            
-            verify("unpin_weight", 
+
+            verify("unpin_weight",
                    lambda: (model.unpin_weight(valid_key), valid_key in model.pinned)[-1],
                    check=lambda x: x is False)
 
-            verify("unpin_all_weights", 
+            verify("unpin_all_weights",
                 lambda: (model.pinned.add(valid_key), model.unpin_all_weights(), len(model.pinned))[-1],
                 check=lambda x: x == 0)
 
@@ -201,10 +199,10 @@ class ProxyTestModelPatcher(io.ComfyNode):
         if valid_key:
             verify("patch_weight_to_device", lambda: model.patch_weight_to_device(valid_key), check=lambda x: True)
 
-        verify("get_model_object", 
-               lambda: model.get_model_object("diffusion_model") is not None, 
+        verify("get_model_object",
+               lambda: model.get_model_object("diffusion_model") is not None,
                check=lambda x: x is True)
-        
+
         # ---------------------------------------------------------------------
         # 5. State Management
         # ---------------------------------------------------------------------
@@ -212,19 +210,19 @@ class ProxyTestModelPatcher(io.ComfyNode):
         lines.append("5. STATE MANAGEMENT")
         lines.append("-" * 40)
 
-        verify("set_attachments", 
+        verify("set_attachments",
                lambda: (model.set_attachments("test_att", "val_att"), model.attachments["test_att"])[-1],
                check=lambda x: x == "val_att")
         verify("get_attachment", lambda: model.get_attachment("test_att"), check=lambda x: x == "val_att")
         verify("remove_attachments",
                lambda: (model.remove_attachments("test_att"), model.get_attachment("test_att"))[-1],
                check=lambda x: x is None)
-        
+
         verify("set_injections",
                lambda: (model.set_injections("test_inj", ["val"]), model.injections["test_inj"])[-1],
                check=lambda x: x == ["val"])
         verify("get_injections", lambda: model.get_injections("test_inj"), check=lambda x: x == ["val"])
-        verify("remove_injections", 
+        verify("remove_injections",
                lambda: (model.remove_injections("test_inj"), model.get_injections("test_inj"))[-1],
                check=lambda x: x is None)
 
@@ -232,10 +230,10 @@ class ProxyTestModelPatcher(io.ComfyNode):
                lambda: (model.set_additional_models("test_m", [model]), model.additional_models["test_m"])[-1],
                check=lambda x: len(x) == 1)
         verify("get_additional_models", lambda: model.get_additional_models(), check=lambda x: len(x) > 0)
-        verify("get_additional_models_with_key", 
-               lambda: model.get_additional_models_with_key("test_m"), 
+        verify("get_additional_models_with_key",
+               lambda: model.get_additional_models_with_key("test_m"),
                check=lambda x: len(x) == 1)
-        verify("remove_additional_models", 
+        verify("remove_additional_models",
                lambda: (model.remove_additional_models("test_m"), "test_m" in model.additional_models)[-1],
                check=lambda x: x is False)
 
@@ -247,7 +245,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
         verify("lora_key_patches_present",
                lambda: len(model.get_key_patches()) > 0,
                check=lambda x: x is True)
-               
+
         verify("inspect_object_patches",
                lambda: isinstance(model.object_patches, dict),
                check=lambda x: x is True)
@@ -259,7 +257,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
         verify("lora_key_patches_present",
                lambda: len(model.get_key_patches()) > 0,
                check=lambda x: x is True)
-               
+
         verify("inspect_object_patches",
                lambda: isinstance(model.object_patches, dict),
                check=lambda x: x is True)
@@ -270,7 +268,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("6. HOOKS SYSTEM")
         lines.append("-" * 40)
-        
+
         test_hook = comfy.hooks.WeightHook()
         test_hooks = comfy.hooks.HookGroup()
         test_hooks.add(test_hook)
@@ -279,9 +277,9 @@ class ProxyTestModelPatcher(io.ComfyNode):
         verify("add_hook_patches",
                lambda: (model.add_hook_patches(test_hook, dummy_patches), test_hook.hook_ref in model.hook_patches)[-1],
                check=lambda x: x is True)
-               
+
         # Fixed: clean_hooks just unpatches/clears cache, checking return None
-        verify("clean_hooks", 
+        verify("clean_hooks",
                lambda: model.clean_hooks(),
                check=lambda x: x is None)
 
@@ -292,20 +290,20 @@ class ProxyTestModelPatcher(io.ComfyNode):
         verify("get_key_patches", lambda: model.get_key_patches(), check=lambda x: isinstance(x, dict))
 
         # Fixed: arguments order and types (t tensor, hook_group, model_options)
-        verify("prepare_hook_patches_current_keyframe", 
-               lambda: model.prepare_hook_patches_current_keyframe(torch.tensor([0.0]), test_hooks, model.model_options) is None, 
+        verify("prepare_hook_patches_current_keyframe",
+               lambda: model.prepare_hook_patches_current_keyframe(torch.tensor([0.0]), test_hooks, model.model_options) is None,
                check=lambda x: True)
 
-        verify("register_all_hook_patches", 
+        verify("register_all_hook_patches",
                lambda: (model.register_all_hook_patches(test_hooks, dummy_patches), True)[-1],
                check=lambda x: True)
-        
+
         verify("restore_hook_patches", lambda: model.restore_hook_patches(), check=lambda x: x is None)
 
-        verify("set_hook_mode", 
+        verify("set_hook_mode",
                lambda: (model.set_hook_mode("test_mode"), model.hook_mode)[-1],
                check=lambda x: x == "test_mode")
-        
+
         verify("unpatch_hooks", lambda: model.unpatch_hooks(), check=lambda x: x is None)
 
         # ---------------------------------------------------------------------
@@ -314,48 +312,48 @@ class ProxyTestModelPatcher(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("7. CORE LIFECYCLE")
         lines.append("-" * 40)
-        
+
         # Fixed: Use Tensor for value to avoid patch_model crash
         dummy_tensor = torch.zeros(1)
         if valid_key:
              # Verify add_patches works and returns list
-             verify("add_patches", 
+             verify("add_patches",
                    lambda: (model.add_patches({valid_key: dummy_tensor}, 1.0, 1.0), model.patches[valid_key])[-1],
                    check=lambda list_res: len(list_res) > 0 and isinstance(list_res[0], tuple))
 
              # Verify get_key_patches works (no filter)
-             verify("get_key_patches", 
-                   lambda: model.get_key_patches(), 
+             verify("get_key_patches",
+                   lambda: model.get_key_patches(),
                    check=lambda res: isinstance(res, dict) and valid_key in res)
 
              # Verify get_key_patches works (with filter)
-             verify("get_key_patches(filter)", 
-                   lambda: model.get_key_patches(filter_prefix=valid_key[:3]), 
+             verify("get_key_patches(filter)",
+                   lambda: model.get_key_patches(filter_prefix=valid_key[:3]),
                    check=lambda res: isinstance(res, dict) and valid_key in res)
-                   
+
              # Verify model_state_dict works (no filter)
-             verify("model_state_dict", 
-                   lambda: model.model_state_dict(), 
+             verify("model_state_dict",
+                   lambda: model.model_state_dict(),
                    check=lambda res: isinstance(res, dict) and valid_key in res)
-                   
+
              # Verify model_state_dict works (with filter)
-             verify("model_state_dict(filter)", 
-                   lambda: model.model_state_dict(filter_prefix=valid_key[:3]), 
+             verify("model_state_dict(filter)",
+                   lambda: model.model_state_dict(filter_prefix=valid_key[:3]),
                    check=lambda res: isinstance(res, dict) and valid_key in res)
-        
-        verify("cleanup", 
+
+        verify("cleanup",
                lambda: (model.cleanup(), model.current_hooks is None)[-1],
                check=lambda x: True) # cleanup returns None, current_hooks becomes None. Verify success.
 
-        verify("eject_model", 
+        verify("eject_model",
                lambda: (model.eject_model(), model.is_injected)[-1],
                check=lambda x: x is False)
 
         # Removed DummyInjector test: Dynamic classes are not serializable (Security).
-        # verify("inject_model call", 
+        # verify("inject_model call",
         #        lambda: (model.set_injections("dull", [DummyInjector()]), model.inject_model(), model.is_injected)[-1],
         #        check=lambda x: x is True)
-        
+
         # CRITICAL: No suppression allowed. These methods MUST return None (Success) or crash.
         # patch_model returns self.model, which might be a proxy or original. Just check not None.
         verify("patch_model", lambda: model.patch_model(), check=lambda x: x is not None)
@@ -363,8 +361,8 @@ class ProxyTestModelPatcher(io.ComfyNode):
         verify("pre_run", lambda: model.pre_run(), check=lambda x: x is None)
         verify("prepare_state", lambda: model.prepare_state(model.model), check=lambda x: True) # returns whatever state is, acceptable
 
-        with model.use_ejected() as ejected:
-             verify("use_ejected", lambda: model.is_injected is False, check=lambda x: x is True)
+        with model.use_ejected():
+            verify("use_ejected", lambda: model.is_injected is False, check=lambda x: x is True)
 
 # ... (Previous imports and setup remain same)
 
@@ -407,7 +405,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
 
         if hasattr(model, "set_model_compute_dtype"):
              s_tests.append(("set_model_compute_dtype", lambda: model.set_model_compute_dtype(torch.float16) is None))
-        
+
         for name, logic in s_tests:
              verify(name, logic, check=lambda x: True) # implicit truth check
 
@@ -418,16 +416,16 @@ class ProxyTestModelPatcher(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("GROUP 9: EXHAUSTIVE DUNDERS & EXTRAS")
         lines.append("-" * 40)
-        
+
         # Hardcoded list of 28 known dunders + common ones to verify
         target_dunders = [
-            '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', 
-            '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', 
-            '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', 
+            '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__',
+            '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__',
+            '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__',
             '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__',
-            '__getstate__', '__setstate__', '__del__' 
+            '__getstate__', '__setstate__', '__del__'
         ]
-        
+
         for name in target_dunders:
             verify(f"Dunder: {name}", lambda: hasattr(model, name), check=lambda x: True)
 
@@ -437,7 +435,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("GROUP 3: INSTANCE ATTRIBUTES")
         lines.append("-" * 40)
-        
+
         attrs = [
             "size", "model", "patches", "backup", "object_patches", "object_patches_backup",
             "weight_wrapper_patches", "model_options", "load_device", "offload_device",
@@ -446,7 +444,7 @@ class ProxyTestModelPatcher(io.ComfyNode):
             "skip_injection", "injections", "hook_patches", "hook_patches_backup", "hook_backup",
             "cached_hook_patches", "current_hooks", "forced_hooks", "is_clip", "hook_mode"
         ]
-        
+
         for attr in attrs:
             verify(f"Attr: {attr}", lambda: getattr(model, attr), check=lambda x: True)
 

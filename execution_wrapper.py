@@ -184,7 +184,7 @@ def run_code_direct(
         sys.stdout = stdout_capture
         namespace = inputs.copy()
         namespace["__builtins__"] = __builtins__
-        exec(code, namespace)
+        exec(code, namespace)  # noqa: S102
         result = namespace.get("result", "")
         stdout = stdout_capture.getvalue()
         return (result, stdout, 0)

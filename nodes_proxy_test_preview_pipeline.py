@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class ProxyTestPreviewPipeline(io.ComfyNode):
     """End-to-end test of preview pipeline - tests full flow from child to host."""
-    
+
     @classmethod
     def define_schema(cls) -> io.Schema:
         return io.Schema(
@@ -40,12 +40,12 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         tested = 0
         passed = 0
         failed = 0
-        
+
         lines.append("=" * 60)
         lines.append("PREVIEW PIPELINE INTEGRATION TEST")
         lines.append("=" * 60)
         lines.append("")
-        
+
         def verify(name: str,
                   action: Callable[[], Any],
                   check: Callable[[Any], bool] | None = None) -> Any:
@@ -76,13 +76,13 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("SECTION 1: CLI ARGS PROXY")
         lines.append("-" * 40)
-        
+
         from comfy.cli_args import args, LatentPreviewMethod
-        
+
         local_method = args.preview_method
         local_method_str = local_method.value
         lines.append(f"  Local args.preview_method: {local_method} ('{local_method_str}')")
-        
+
         proxy_method_str = None
         try:
             from comfy.isolation.proxies.cli_args_proxy import CliArgsProxy
@@ -90,7 +90,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
             proxy_method_str = proxy.get_preview_method()
             proxy_method = LatentPreviewMethod.from_string(proxy_method_str)
             lines.append(f"  Proxy get_preview_method(): {proxy_method} ('{proxy_method_str}')")
-            
+
             if is_child:
                 if proxy_method_str == local_method_str == "none":
                     lines.append("  [WARN] Both are 'none' - may indicate proxy not RPC'ing")
@@ -118,11 +118,11 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("SECTION 2: GET_PREVIEWER")
         lines.append("-" * 40)
-        
+
         previewer = None
         latent_format = None
         device = None
-        
+
         try:
             import comfy.model_management as mm
             device = mm.get_torch_device()
@@ -133,7 +133,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
             lines.append(f"  [FAIL] Get device: {e}")
             failed += 1
             tested += 1
-        
+
         try:
             # Get latent format from model
             if hasattr(model, 'model') and hasattr(model.model, 'latent_format'):
@@ -142,7 +142,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
                 passed += 1
                 tested += 1
             else:
-                lines.append(f"  [WARN] Model has no latent_format, using SD15")
+                lines.append("  [WARN] Model has no latent_format, using SD15")
                 import comfy.latent_formats as lf
                 latent_format = lf.SD15()
                 passed += 1
@@ -151,7 +151,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
             lines.append(f"  [FAIL] Get latent format: {e}")
             failed += 1
             tested += 1
-        
+
         if device and latent_format:
             try:
                 import latent_preview
@@ -163,7 +163,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
                 else:
                     # If proxy returned 'none', this is expected
                     if proxy_method_str == "none":
-                        lines.append(f"  [INFO] get_previewer returned None (preview_method='none')")
+                        lines.append("  [INFO] get_previewer returned None (preview_method='none')")
                         passed += 1
                         tested += 1
                     else:
@@ -183,7 +183,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("SECTION 3: PROGRESS BAR HOOK")
         lines.append("-" * 40)
-        
+
         try:
             import comfy.utils
             hook = comfy.utils.PROGRESS_BAR_HOOK
@@ -191,11 +191,11 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
                 lines.append(f"  [PASS] PROGRESS_BAR_HOOK is set: {hook}")
                 passed += 1
                 tested += 1
-                
+
                 # Test calling it with no preview
                 try:
                     hook(1, 10, None, None)
-                    lines.append(f"  [PASS] Hook accepts (value, total, None, None)")
+                    lines.append("  [PASS] Hook accepts (value, total, None, None)")
                     passed += 1
                     tested += 1
                 except Exception as e:
@@ -203,7 +203,7 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
                     failed += 1
                     tested += 1
             else:
-                lines.append(f"  [WARN] PROGRESS_BAR_HOOK is None")
+                lines.append("  [WARN] PROGRESS_BAR_HOOK is None")
                 passed += 1
                 tested += 1
         except Exception as e:
@@ -218,33 +218,33 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("SECTION 4: SYNTHETIC PREVIEW TEST")
         lines.append("-" * 40)
-        
+
         if previewer is not None:
             try:
                 import torch
                 # Create a dummy latent
                 dummy_latent = torch.randn(1, 4, 64, 64, device=device)
-                
+
                 # Try to decode
                 preview_result = previewer.decode_latent_to_preview_image("JPEG", dummy_latent)
-                
+
                 if preview_result is not None:
                     if isinstance(preview_result, tuple) and len(preview_result) >= 2:
                         fmt, img, *rest = preview_result
                         lines.append(f"  [PASS] Decoded preview: format={fmt}, image_type={type(img).__name__}")
-                        
+
                         from PIL import Image
                         if isinstance(img, Image.Image):
                             lines.append(f"         Image size: {img.size}")
                             passed += 1
                             tested += 1
-                            
+
                             # Now test sending through progress hook
                             try:
                                 import comfy.utils
                                 if comfy.utils.PROGRESS_BAR_HOOK:
                                     comfy.utils.PROGRESS_BAR_HOOK(5, 10, preview_result, None)
-                                    lines.append(f"  [PASS] Sent preview through PROGRESS_BAR_HOOK")
+                                    lines.append("  [PASS] Sent preview through PROGRESS_BAR_HOOK")
                                     passed += 1
                                     tested += 1
                             except Exception as e:
@@ -260,17 +260,17 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
                         passed += 1
                         tested += 1
                 else:
-                    lines.append(f"  [WARN] decode_latent_to_preview_image returned None")
+                    lines.append("  [WARN] decode_latent_to_preview_image returned None")
                     passed += 1
                     tested += 1
-                    
+
             except Exception as e:
                 lines.append(f"  [FAIL] Synthetic preview: {e}")
                 lines.append(f"         {traceback.format_exc()}")
                 failed += 1
                 tested += 1
         else:
-            lines.append(f"  [SKIP] No previewer available (method='none' or failed to create)")
+            lines.append("  [SKIP] No previewer available (method='none' or failed to create)")
             tested += 1
             passed += 1
 
@@ -281,21 +281,21 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append("-" * 40)
         lines.append("SECTION 5: UTILS PROXY")
         lines.append("-" * 40)
-        
+
         try:
             from comfy.isolation.proxies.utils_proxy import UtilsProxy
             utils_proxy = UtilsProxy.get_instance()
-            lines.append(f"  [PASS] UtilsProxy.get_instance()")
+            lines.append("  [PASS] UtilsProxy.get_instance()")
             passed += 1
             tested += 1
-            
+
             # Check it has progress_bar_hook method
             if hasattr(utils_proxy, 'progress_bar_hook'):
-                lines.append(f"  [PASS] UtilsProxy has progress_bar_hook method")
+                lines.append("  [PASS] UtilsProxy has progress_bar_hook method")
                 passed += 1
                 tested += 1
             else:
-                lines.append(f"  [FAIL] UtilsProxy missing progress_bar_hook")
+                lines.append("  [FAIL] UtilsProxy missing progress_bar_hook")
                 failed += 1
                 tested += 1
         except Exception as e:
@@ -315,12 +315,12 @@ class ProxyTestPreviewPipeline(io.ComfyNode):
         lines.append(f"Failed:       {failed}")
         lines.append(f"Pass rate:    {100*passed//tested if tested else 0}%")
         lines.append("")
-        
+
         if failed == 0:
             lines.append("[SUCCESS] Preview pipeline tests passed!")
         else:
             lines.append(f"[ATTENTION] {failed} test(s) failed")
-        
+
         report = "\n".join(lines)
         logger.info(f"\n{report}")
         return io.NodeOutput(report)

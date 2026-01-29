@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import logging
+import os
 import torch
 from comfy import model_management
 from comfy_api.latest import io

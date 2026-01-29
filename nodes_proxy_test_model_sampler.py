@@ -35,7 +35,7 @@ class ProxyTestModelSampler(io.ComfyNode):
         # Get the model_sampling instance from the ModelPatcher
         # This will be a ModelSamplingProxy in isolated mode, or ModelSampling in standard
         sampler = model.get_model_object("model_sampling")
-        
+
         lines = []
         tested = 0
         passed = 0
@@ -97,12 +97,12 @@ class ProxyTestModelSampler(io.ComfyNode):
         dummy_sigma = torch.tensor(1.0)
         dummy_timestep = torch.tensor(500.0)
 
-        verify("timestep", 
-               lambda: sampler.timestep(dummy_sigma), 
+        verify("timestep",
+               lambda: sampler.timestep(dummy_sigma),
                check=lambda x: isinstance(x, torch.Tensor))
 
-        verify("sigma", 
-               lambda: sampler.sigma(dummy_timestep), 
+        verify("sigma",
+               lambda: sampler.sigma(dummy_timestep),
                check=lambda x: isinstance(x, torch.Tensor))
 
         verify("percent_to_sigma",
@@ -132,7 +132,7 @@ class ProxyTestModelSampler(io.ComfyNode):
         verify("noise_scaling",
                lambda: sampler.noise_scaling(dummy_sigma, dummy_noise, dummy_latent),
                check=lambda x: isinstance(x, torch.Tensor))
-        
+
         verify("inverse_noise_scaling",
                lambda: sampler.inverse_noise_scaling(dummy_sigma, dummy_latent),
                check=lambda x: isinstance(x, torch.Tensor))
@@ -148,7 +148,7 @@ class ProxyTestModelSampler(io.ComfyNode):
         new_sigmas = torch.linspace(0.1, 10.0, 10).float()
         expected_min = new_sigmas[0].item()
         expected_max = new_sigmas[-1].item()
-        
+
         # Verify set_sigmas updates internal state (sigma_min/max should change)
         def check_set_sigmas():
             sampler.set_sigmas(new_sigmas)
@@ -158,8 +158,8 @@ class ProxyTestModelSampler(io.ComfyNode):
             # Allow small float tolerance if needed, but linear space should be exact here
             return abs(s_min - expected_min) < 1e-5 and abs(s_max - expected_max) < 1e-5
 
-        verify("set_sigmas (State Update)", 
-               check_set_sigmas, 
+        verify("set_sigmas (State Update)",
+               check_set_sigmas,
                check=lambda x: bool(x))
 
         lines.append("")
