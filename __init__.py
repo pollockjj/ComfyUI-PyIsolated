@@ -20,6 +20,7 @@ from .nodes_proxy_test_clip import ProxyTestCLIP
 from .nodes_proxy_test_vae import ProxyTestVAE
 from .nodes_proxy_test_model_sampler import ProxyTestModelSampler
 from .nodes_gate import GateAny
+from .nodes_free_memory import FreeMemoryImagePassthrough
 
 class PyIsolatedExtension(ComfyExtension):
     async def get_node_list(self):
@@ -40,6 +41,7 @@ class PyIsolatedExtension(ComfyExtension):
             ProxyTestVAE,
             ProxyTestModelSampler,
             GateAny,
+            FreeMemoryImagePassthrough,
         ]
 
 
